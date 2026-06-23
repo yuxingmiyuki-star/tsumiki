@@ -953,7 +953,7 @@ export default function App() {
             </button>
           </div>
           {showCoach && !editMode && <div style={s.coach}>アイコンを長押しすると、器にひと粒落ちます<span style={s.coachArrow}>▾</span></div>}
-          <div style={{ ...s.grid, gap: compact === 2 ? "6px 38px" : compact === 1 ? "10px 48px" : "16px 56px" }}>
+          <div style={{ ...s.grid, rowGap: compact === 2 ? 4 : compact === 1 ? 8 : 12 }}>
           {g.habits.map((h, i) => {
             const col = `rgb(${h.c.join(",")})`;
             const st = habitStatus(curGi, i); const dis = full || !st.ok;
@@ -1651,7 +1651,7 @@ const mkRaw = (T) => ({
   dot: { width: 8, height: 8, borderRadius: 999, border: "none", background: T.lo2, cursor: "pointer", padding: 0 },
   dotOn: { background: T.gold, width: 18, borderRadius: 4 },
   dotPlus: { width: 30, height: 30, borderRadius: 999, border: `1px solid ${T.hair2}`, background: "transparent", color: T.lo, fontSize: 12, cursor: "pointer", lineHeight: 1, padding: 0, marginLeft: 2, display: "flex", alignItems: "center", justifyContent: "center" },
-  grid: { display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "12px 20px", padding: "2px 0" },
+  grid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px 8px", padding: "2px 0", justifyItems: "center" },
   cell: { display: "flex", flexDirection: "column", alignItems: "center", gap: 6, width: 84 },
   circleBtn: { position: "relative", width: 78, height: 78, borderRadius: "50%", background: "transparent", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", userSelect: "none", touchAction: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none", WebkitTapHighlightColor: "transparent", outline: "none", padding: 0 },
   addCell: { width: 78, height: 78, borderRadius: "50%", background: T.cellGrad, border: `1px solid ${T.hair2}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0 },
