@@ -1077,7 +1077,7 @@ export default function App() {
           </div>
         ) : (
         <div style={{ ...s.habits, gap: compact === 2 ? 2 : compact === 1 ? 3 : 4 }}>
-          <div style={{ ...s.grid, gap: compact === 2 ? 4 : compact === 1 ? 8 : 12, ...(habitRows.length === 1 ? { minHeight: 220, justifyContent: "center" } : {}), position: "relative" }}>
+          <div style={{ ...s.grid, gap: compact === 2 ? 4 : compact === 1 ? 8 : 12, minHeight: 220, justifyContent: "center", position: "relative" }}>
           {habitRows.map((row, ri) => {
             const two = row.length === 2; // 2個の行は画面を3分割するように散らす
             return (
