@@ -1189,7 +1189,7 @@ export default function App() {
             );
           })}
           </div>
-          <div style={compact === 1 ? s.habitToolsFloat : s.habitTools}>
+          <div style={s.habitToolsFloat}>
             <button style={{ ...s.editIcon, ...(editMode ? s.editIconOn : {}) }} onClick={() => setEditMode((m) => !m)} aria-label={editMode ? "完了" : "習慣を編集"}>
               {editMode ? <Check size={15} color="#0B0C10" strokeWidth={3} /> : <Pencil size={14} color={T.lo} strokeWidth={2.2} />}
             </button>
