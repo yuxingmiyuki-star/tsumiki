@@ -1077,8 +1077,8 @@ export default function App() {
           </div>
         ) : (
         <div style={{ ...s.habits, gap: compact === 2 ? 2 : compact === 1 ? 3 : 4 }}>
+          <div style={{ ...s.grid, gap: compact === 2 ? 4 : compact === 1 ? 8 : 12, ...(habitRows.length === 1 ? { minHeight: 220, justifyContent: "center" } : {}), position: "relative" }}>
           {showCoach && !editMode && <div style={s.coach}>アイコンを長押しすると、器にひと粒落ちます<span style={s.coachArrow}>▾</span></div>}
-          <div style={{ ...s.grid, gap: compact === 2 ? 4 : compact === 1 ? 8 : 12, ...(habitRows.length === 1 ? { minHeight: 220, justifyContent: "center" } : {}) }}>
           {habitRows.map((row, ri) => {
             const two = row.length === 2; // 2個の行は画面を3分割するように散らす
             return (
@@ -1880,7 +1880,7 @@ const mkRaw = (T) => ({
   introTitle: { fontSize: 19, fontWeight: 700, color: T.hi, letterSpacing: 0.5 },
   introBody: { fontSize: 13.5, color: T.lo, lineHeight: 1.75 },
   introSkip: { background: "transparent", border: "none", color: T.lo2, fontSize: 12, cursor: "pointer", fontFamily: "inherit", padding: 4 },
-  coach: { position: "absolute", top: -38, left: "50%", transform: "translateX(-50%)", zIndex: 5, whiteSpace: "nowrap", background: `${T.gold}1f`, border: `1px solid ${T.gold}`, color: T.gold, borderRadius: 999, padding: "7px 14px", fontSize: 12, fontWeight: 600, textAlign: "center", animation: "coachpulse 1.8s ease-in-out infinite" },
+  coach: { position: "absolute", top: 8, left: "50%", transform: "translateX(-50%)", zIndex: 5, whiteSpace: "nowrap", maxWidth: "92%", overflow: "hidden", textOverflow: "ellipsis", background: `${T.gold}1f`, border: `1px solid ${T.gold}`, color: T.gold, borderRadius: 999, padding: "7px 14px", fontSize: 11.5, fontWeight: 600, textAlign: "center", animation: "coachpulse 1.8s ease-in-out infinite" },
   coachArrow: { position: "absolute", bottom: -9, left: "50%", transform: "translateX(-50%)", color: T.gold, fontSize: 13, lineHeight: 1 },
   addBtn: { background: T.surface2, border: `1px solid ${T.hair2}`, color: T.hi, borderRadius: 10, padding: "0 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" },
   hList: { display: "flex", flexDirection: "column", gap: 7, maxHeight: 168, overflowY: "auto" },
