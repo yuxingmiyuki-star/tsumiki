@@ -157,6 +157,26 @@ function drawOrb(ctx, bs, R, cap, now, o, img, gc) {
   const bgl = ctx.createRadialGradient(CX, CY + CR * 0.5, 4, CX, CY + CR * 0.5, CR);
   bgl.addColorStop(0, `rgba(${tint.join(",")},${fill * 0.18})`); bgl.addColorStop(1, `rgba(${tint.join(",")},0)`);
   ctx.fillStyle = bgl; ctx.beginPath(); ctx.arc(CX, CY, CR, 0, 7); ctx.fill();
+  // 空の器：かすかな息づき。粒が無いときだけ、ゆっくり巡る光と底でただよう数粒で「死んでない」感を出す
+  if (bs.length === 0) {
+    ctx.save(); ctx.beginPath(); ctx.arc(CX, CY, CR - 0.5, 0, 7); ctx.clip();
+    const ts = now / 1000;
+    const ang = ts * 0.16, lx = CX + Math.cos(ang) * CR * 0.4, ly = CY - 8 + Math.sin(ang) * CR * 0.28;
+    const breathe = 0.5 + 0.5 * Math.sin(ts * 0.6);
+    const glow = ctx.createRadialGradient(lx, ly, 2, lx, ly, CR * 0.95);
+    glow.addColorStop(0, `rgba(${tint.join(",")},${0.045 + breathe * 0.05})`); glow.addColorStop(1, `rgba(${tint.join(",")},0)`);
+    ctx.fillStyle = glow; ctx.fillRect(CX - CR, CY - CR, CR * 2, CR * 2);
+    for (let i = 0; i < 3; i++) {
+      const ph = i * 2.1;
+      const mx = CX + Math.sin(ts * 0.34 + ph) * CR * 0.46;
+      const my = CY + CR * 0.46 + Math.cos(ts * 0.28 + ph) * CR * 0.1;
+      const ma = 0.09 + 0.05 * Math.sin(ts * 0.8 + ph);
+      const m = ctx.createRadialGradient(mx, my, 0, mx, my, 5.5);
+      m.addColorStop(0, `rgba(${tint.join(",")},${ma})`); m.addColorStop(1, `rgba(${tint.join(",")},0)`);
+      ctx.fillStyle = m; ctx.beginPath(); ctx.arc(mx, my, 5.5, 0, 7); ctx.fill();
+    }
+    ctx.restore();
+  }
   ctx.save(); ctx.beginPath(); ctx.arc(CX, CY, CR - 0.5, 0, 7); ctx.clip();
   for (const b of bs) {
     const [r, g2, bl] = b.c;
@@ -1963,7 +1983,7 @@ const mkRaw = (T) => ({
   emptyOver: { position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 8, padding: "0 24px" },
   addOrbPlus: { background: "transparent", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 2 },
   addOrbLab: { fontSize: 13, color: T.lo, letterSpacing: 0.5 },
-  addHint: { fontSize: 12, color: T.lo2, textAlign: "center", lineHeight: 1.8, padding: "18px 0 8px" },
+  addHint: { fontSize: 12, color: T.lo2, textAlign: "center", lineHeight: 1.8, padding: "40px 0 8px" },
   emptyBig: { fontSize: 26, fontWeight: 800, color: T.gold, letterSpacing: 1 },
   emptySub: { fontSize: 13, color: T.lo, lineHeight: 1.7 },
   achNote: { fontSize: 11.5, color: T.gold, opacity: 0.8, marginTop: -2, marginBottom: 4 },
