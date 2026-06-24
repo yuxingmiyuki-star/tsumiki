@@ -129,7 +129,7 @@ const MAX_HABITS = 6; // 1ゴールあたりの習慣の上限
 const MAX_GOALS = 4; // 同時に持てる「なりたい自分」の器の数
 const CX = 160, CY = 158, CR = 116, GRAV = 0.5, REST = 0.26, FRIC = 0.99;
 // 追加前の空きスロット専用：小さなプレビュー粒を物理で積もらせる
-const AMB_R = 7, AMB_N = 40, AMB_CAP = 180;
+const AMB_R = 7, AMB_N = 28, AMB_CAP = 180;
 
 const grainR = (cap) => Math.max(5, Math.min(22, CR * Math.sqrt(0.62 / cap)));
 // 1つのオーブを描く（RAFの本描画と、隣ゴールのスナップショット生成で共用）
