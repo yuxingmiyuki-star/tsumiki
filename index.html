@@ -1586,6 +1586,7 @@ export default function App() {
 
         const totalPages = 1 + gg.habits.length;
         const dp = Math.min(detailPage, totalPages - 1);
+        dDragRef.current = { total: totalPages };
 
         // SVGグラフ共通
         const GCW = 300, GCH = 80, GPX = 6, GPY = 8;
@@ -1616,25 +1617,31 @@ export default function App() {
               {/* スクロール本体（横スワイプでページ送り） */}
               <div
                 key={dp}
-                style={{ overflowY: "auto", overflowX: "hidden", padding: "16px 20px 16px", display: "flex", flexDirection: "column", gap: 14, maxHeight: "calc(88vh - 160px)", animation: "dpSlide .26s cubic-bezier(.22,1,.3,1)", touchAction: "pan-y" }}
-                onPointerDown={(e) => { dDragRef.current = { x: e.clientX, y: e.clientY, decided: null }; }}
-                onPointerMove={(e) => {
-                  const dr = dDragRef.current; if (!dr) return;
-                  const dx = e.clientX - dr.x, dy = e.clientY - dr.y;
-                  if (dr.decided == null) {
-                    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
-                    dr.decided = Math.abs(dx) > Math.abs(dy) * 1.3 ? "h" : "v";
-                  }
-                  if (dr.decided === "h") dr.dx = dx;
+                ref={(el) => {
+                  if (!el || el._swipeBound) return;
+                  el._swipeBound = true;
+                  let sx = 0, sy = 0, decided = null, dxv = 0;
+                  el.addEventListener("touchstart", (e) => {
+                    const t = e.touches[0]; sx = t.clientX; sy = t.clientY; decided = null; dxv = 0;
+                  }, { passive: true });
+                  el.addEventListener("touchmove", (e) => {
+                    const t = e.touches[0];
+                    const dx = t.clientX - sx, dy = t.clientY - sy;
+                    if (decided == null) {
+                      if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+                      decided = Math.abs(dx) > Math.abs(dy) * 1.3 ? "h" : "v";
+                    }
+                    if (decided === "h") { dxv = dx; e.preventDefault(); }
+                  }, { passive: false });
+                  el.addEventListener("touchend", () => {
+                    if (decided === "h") {
+                      if (dxv < -50) setDetailPage((p) => Math.min(p + 1, dDragRef.current.total - 1));
+                      else if (dxv > 50) setDetailPage((p) => Math.max(p - 1, 0));
+                    }
+                    decided = null;
+                  });
                 }}
-                onPointerUp={() => {
-                  const dr = dDragRef.current; dDragRef.current = null;
-                  if (!dr || dr.decided !== "h") return;
-                  const dx = dr.dx || 0;
-                  if (dx < -50 && dp < totalPages - 1) setDetailPage(dp + 1);
-                  else if (dx > 50 && dp > 0) setDetailPage(dp - 1);
-                }}
-                onPointerCancel={() => { dDragRef.current = null; }}
+                style={{ overflowY: "auto", overflowX: "hidden", padding: "16px 20px 16px", display: "flex", flexDirection: "column", gap: 14, maxHeight: "calc(88vh - 160px)", animation: "dpSlide .26s cubic-bezier(.22,1,.3,1)" }}
               >
 
                 {dp === 0 ? (
