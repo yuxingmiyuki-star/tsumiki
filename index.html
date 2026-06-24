@@ -859,12 +859,12 @@ export default function App() {
   const hc = hasGoal ? g.habits.length : 0;
   const showAddCell = editMode && hc < MAX_HABITS; // 末尾に「追加」セルを出すか
   const hcEff = hc + (showAddCell ? 1 : 0); // レイアウト計算用の実効セル数
-  const compact = hcEff >= 4 ? 1 : 0; // 0=通常（〜3個） 1=詰め（4〜6個）
+  const compact = hcEff >= 5 ? 2 : hcEff >= 3 ? 1 : 0; // 0=1〜2個 1=3〜4個 2=5〜6個
   // 習慣数（追加セル含む）でアイコンの大きさを段階的に変える：少ないほど大きく
-  const cellSize = hcEff <= 1 ? { D: 160, icon: 54, emoji: 54, w: 174 }
-    : hcEff === 2 ? { D: 142, icon: 48, emoji: 48, w: 156 }
-    : hcEff <= 4 ? { D: 120, icon: 41, emoji: 40, w: 132 }
-    : { D: 88, icon: 30, emoji: 30, w: 98 };
+  const cellSize = hcEff <= 1 ? { D: 160, icon: 54, emoji: 54, w: 174, gap: 6 }
+    : hcEff === 2 ? { D: 142, icon: 48, emoji: 48, w: 156, gap: 6 }
+    : hcEff <= 4 ? { D: 120, icon: 41, emoji: 40, w: 132, gap: 4 }
+    : { D: 88, icon: 30, emoji: 30, w: 98, gap: 3 };
   // 行の分け方：1〜2個は1行、3〜4個は2行(2+1 / 2+2)、5〜6個は2行(3+2 / 3+3)
   const habitRows = (() => {
     const items = hasGoal ? g.habits.map((h, i) => ({ h, i })) : [];
@@ -903,7 +903,7 @@ export default function App() {
     const onFillIcon = (0.299 * fc[0] + 0.587 * fc[1] + 0.114 * fc[2]) > 150 ? "#0B0C10" : "#F4F1EA"; // 塗りの上で見える色
     const timedHint = isTimed && st.ok && !dt && !running && !full; // ▶25
     return (
-      <div key={h.id} ref={(el) => { if (el) habitCellRefs.current[h.id] = el; else delete habitCellRefs.current[h.id]; }} style={{ ...s.cell, width: sz.w }}>
+      <div key={h.id} ref={(el) => { if (el) habitCellRefs.current[h.id] = el; else delete habitCellRefs.current[h.id]; }} style={{ ...s.cell, width: sz.w, gap: sz.gap }}>
         {hDragFrom === i ? (<>
           {/* 掴んでいる間の置き場所（点線の円） */}
           <div style={{ width: D, height: D, borderRadius: "50%", border: `2px dashed ${T.hair2}`, boxSizing: "border-box" }} />
@@ -1085,7 +1085,7 @@ export default function App() {
           </div>
         ) : (
         <div style={{ ...s.habits, gap: compact === 2 ? 2 : compact === 1 ? 3 : 4 }}>
-          <div style={{ ...s.grid, gap: compact === 2 ? 4 : compact === 1 ? 8 : 12, minHeight: 220, justifyContent: "center", position: "relative" }}>
+          <div style={{ ...s.grid, gap: compact === 2 ? 3 : compact === 1 ? 6 : 12, minHeight: 220, justifyContent: "center", position: "relative" }}>
           {habitRows.map((row, ri) => {
             const spread = row.length === 2 && habitRows.length === 1; // 2個1行のときだけ左右に広げる
             return (
@@ -1093,7 +1093,7 @@ export default function App() {
               ? { ...s.gridRow, width: "100%", justifyContent: "space-evenly" }
               : { ...s.gridRow, gap: compact === 2 ? "0 24px" : compact === 1 ? "0 32px" : "0 40px" }}>
               {row.map((it) => it.add ? (
-                <div key="add" style={{ ...s.cell, width: cellSize.w, animation: "cellIn .58s cubic-bezier(.2,.8,.3,1) both" }}>
+                <div key="add" style={{ ...s.cell, width: cellSize.w, gap: cellSize.gap, animation: "cellIn .58s cubic-bezier(.2,.8,.3,1) both" }}>
                   <button style={{ ...s.addCell, width: cellSize.D, height: cellSize.D }} onClick={openAdd}><Plus size={Math.round(cellSize.icon)} color={T.gold} strokeWidth={2} /></button>
                   <span style={s.cellLabel}>追加</span>
                 </div>
@@ -1102,7 +1102,7 @@ export default function App() {
             );
           })}
           </div>
-          <div style={s.habitTools}>
+          <div style={compact === 1 ? s.habitToolsFloat : s.habitTools}>
             <button style={{ ...s.editIcon, ...(editMode ? s.editIconOn : {}) }} onClick={() => setEditMode((m) => !m)} aria-label={editMode ? "完了" : "習慣を編集"}>
               {editMode ? <Check size={15} color="#0B0C10" strokeWidth={3} /> : <Pencil size={14} color={T.lo} strokeWidth={2.2} />}
             </button>
@@ -1841,6 +1841,7 @@ const mkRaw = (T) => ({
   analyzeBtn: { width: 34, height: 34, borderRadius: 999, border: `1px solid ${T.hair2}`, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, padding: 0 },
   habits: { display: "flex", flexDirection: "column", gap: 4, position: "relative" },
   habitTools: { display: "flex", justifyContent: "flex-start", alignItems: "center" },
+  habitToolsFloat: { position: "absolute", left: 0, bottom: 0, display: "flex", alignItems: "center", zIndex: 4 },
   animChip: { background: "transparent", border: `1px solid ${T.hair2}`, color: T.lo, borderRadius: 999, padding: "4px 9px", fontSize: 11, cursor: "pointer", fontFamily: "inherit" },
   animChipOn: { borderColor: T.gold, color: T.gold, background: `${T.gold}1a` },
   editIcon: { width: 30, height: 30, borderRadius: 999, border: `1px solid ${T.hair2}`, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0 },
@@ -1860,7 +1861,7 @@ const mkRaw = (T) => ({
   dot: { width: 8, height: 8, borderRadius: 999, border: "none", background: T.lo2, cursor: "pointer", padding: 0 },
   dotOn: { background: T.gold, width: 18, borderRadius: 4 },
   dotPlus: { width: 30, height: 30, borderRadius: 999, border: `1px solid ${T.hair2}`, background: "transparent", color: T.lo, fontSize: 12, cursor: "pointer", lineHeight: 1, padding: 0, marginLeft: 2, display: "flex", alignItems: "center", justifyContent: "center" },
-  grid: { display: "flex", flexDirection: "column", alignItems: "center", padding: "2px 0" },
+  grid: { display: "flex", flexDirection: "column", alignItems: "center", padding: 0 },
   gridRow: { display: "flex", justifyContent: "center", alignItems: "flex-start" },
   cell: { display: "flex", flexDirection: "column", alignItems: "center", gap: 6, width: 84 },
   circleBtn: { position: "relative", width: 78, height: 78, borderRadius: "50%", background: "transparent", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", userSelect: "none", touchAction: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none", WebkitTapHighlightColor: "transparent", outline: "none", padding: 0 },
