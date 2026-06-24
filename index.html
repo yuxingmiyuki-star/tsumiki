@@ -1075,24 +1075,22 @@ export default function App() {
         ) : (
         <div style={{ ...s.habits, gap: compact === 2 ? 2 : compact === 1 ? 3 : 4 }}>
           {showCoach && !editMode && <div style={s.coach}>アイコンを長押しすると、器にひと粒落ちます<span style={s.coachArrow}>▾</span></div>}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <div style={{ ...s.grid, gap: compact === 2 ? 4 : compact === 1 ? 8 : 12 }}>
-            {habitRows.map((row, ri) => {
-              const two = row.length === 2; // 2個の行は画面を3分割するように散らす
-              return (
-              <div key={ri} style={two
-                ? { ...s.gridRow, width: "100%", justifyContent: "space-evenly" }
-                : { ...s.gridRow, gap: compact === 2 ? "0 24px" : compact === 1 ? "0 32px" : "0 40px" }}>
-                {row.map((it) => it.add ? (
-                  <div key="add" style={{ ...s.cell, animation: "cellIn .58s cubic-bezier(.2,.8,.3,1) both" }}>
-                    <button style={s.addCell} onClick={openAdd}><Plus size={26} color={T.gold} strokeWidth={2} /></button>
-                    <span style={s.cellLabel}>追加</span>
-                  </div>
-                ) : renderHabitCell(it.h, it.i))}
-              </div>
-              );
-            })}
+          <div style={{ ...s.grid, gap: compact === 2 ? 4 : compact === 1 ? 8 : 12 }}>
+          {habitRows.map((row, ri) => {
+            const two = row.length === 2; // 2個の行は画面を3分割するように散らす
+            return (
+            <div key={ri} style={two
+              ? { ...s.gridRow, width: "100%", justifyContent: "space-evenly" }
+              : { ...s.gridRow, gap: compact === 2 ? "0 24px" : compact === 1 ? "0 32px" : "0 40px" }}>
+              {row.map((it) => it.add ? (
+                <div key="add" style={{ ...s.cell, animation: "cellIn .58s cubic-bezier(.2,.8,.3,1) both" }}>
+                  <button style={s.addCell} onClick={openAdd}><Plus size={26} color={T.gold} strokeWidth={2} /></button>
+                  <span style={s.cellLabel}>追加</span>
+                </div>
+              ) : renderHabitCell(it.h, it.i))}
             </div>
+            );
+          })}
           </div>
           <div style={s.habitTools}>
             <button style={{ ...s.editIcon, ...(editMode ? s.editIconOn : {}) }} onClick={() => setEditMode((m) => !m)} aria-label={editMode ? "完了" : "習慣を編集"}>
@@ -1777,7 +1775,7 @@ const mkRaw = (T) => ({
   mono: { fontFamily: "ui-monospace, Menlo, monospace", fontSize: 12, letterSpacing: 1, color: T.gold },
   idBlock: { display: "flex", alignItems: "center", gap: 10, paddingTop: 2 },
   analyzeBtn: { width: 34, height: 34, borderRadius: 999, border: `1px solid ${T.hair2}`, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, padding: 0 },
-  habits: { display: "flex", flexDirection: "column", gap: 4, flex: 1, minHeight: 0 },
+  habits: { display: "flex", flexDirection: "column", gap: 4 },
   habitTools: { display: "flex", justifyContent: "flex-start", alignItems: "center" },
   animChip: { background: "transparent", border: `1px solid ${T.hair2}`, color: T.lo, borderRadius: 999, padding: "4px 9px", fontSize: 11, cursor: "pointer", fontFamily: "inherit" },
   animChipOn: { borderColor: T.gold, color: T.gold, background: `${T.gold}1a` },
@@ -1889,7 +1887,7 @@ const mkRaw = (T) => ({
   compRow: { display: "flex", alignItems: "center", gap: 10, background: T.surface, border: `1px solid ${T.hair}`, borderRadius: 9, padding: "9px 12px", fontSize: 13, color: T.hi },
   compDot: { width: 11, height: 11, borderRadius: 999 },
   compN: { fontFamily: "ui-monospace, monospace", fontSize: 12, color: T.gold },
-  todayBand: { display: "flex", flexDirection: "column", gap: 12, flex: 1, minHeight: 0 },
+  todayBand: { display: "flex", flexDirection: "column", gap: 12 },
   dayRow: { display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 2 },
   dayLab: { fontFamily: "ui-monospace, monospace", fontSize: 12, color: T.lo, letterSpacing: 1 },
   dayBtn: { background: "transparent", border: `1px solid ${T.hair}`, color: T.hi, borderRadius: 999, padding: "5px 14px", fontSize: 12, cursor: "pointer", fontFamily: "inherit" },
