@@ -423,6 +423,7 @@ export default function App() {
   const dragRef = useRef(null); // 進行中ドラッグの生データ（再描画を避けるためref）
   const ballsBy = useRef({});
   const orbRef = useRef(orbPal);
+  const goldRef = useRef(goldRgb(T)); // 達成色RGB（RAF内で使う）
   const goalsRef = useRef(goals), pageRef = useRef(0);
   const audio = useRef(null), sweep = useRef(null), timer = useRef(null);
   const allClearRef = useRef(false), lastClear = useRef(false);
@@ -492,7 +493,7 @@ export default function App() {
       const oc = document.createElement("canvas"); oc.width = 320 * dpr; oc.height = 300 * dpr;
       const octx = oc.getContext("2d"); octx.scale(dpr, dpr);
       const bs = ballsBy.current[goal.id] || [], cap = capOf(goal);
-      drawOrb(octx, bs, grainR(cap || 30), cap, performance.now(), orbPal, orbImgRef.current[goal.id], goldRgb(orbRef.current));
+      drawOrb(octx, bs, grainR(cap || 30), cap, performance.now(), orbPal, orbImgRef.current[goal.id], goldRef.current);
       return oc.toDataURL();
     } catch (e) { return null; }
   };
@@ -502,7 +503,7 @@ export default function App() {
       const dpr = window.devicePixelRatio || 1;
       const oc = document.createElement("canvas"); oc.width = 320 * dpr; oc.height = 300 * dpr;
       const octx = oc.getContext("2d"); octx.scale(dpr, dpr);
-      drawOrb(octx, [], grainR(30), 0, performance.now(), orbPal, undefined, goldRgb(orbRef.current));
+      drawOrb(octx, [], grainR(30), 0, performance.now(), orbPal, undefined, goldRef.current);
       return oc.toDataURL();
     } catch (e) { return null; }
   };
@@ -517,7 +518,7 @@ export default function App() {
     const step = () => {
       const gi = pageRef.current, g = goalsRef.current[gi];
       const ctx2 = cv.getContext("2d");
-      if (gi < 0 || !g) { drawOrb(ctx, [], grainR(30), 0, performance.now(), orbRef.current, undefined, goldRgb(orbRef.current)); raf = requestAnimationFrame(step); return; }
+      if (gi < 0 || !g) { drawOrb(ctx, [], grainR(30), 0, performance.now(), orbRef.current, undefined, goldRef.current); raf = requestAnimationFrame(step); return; }
       const cap = capOf(g);
       const R = grainR(cap || 30), bs = ballsBy.current[g.id] || [];
       const sim = simState.current[g.id] || (simState.current[g.id] = { active: 360, calm: 0 });
@@ -535,7 +536,7 @@ export default function App() {
       sim.active--;
       if (maxV2 < 0.03) { if (++sim.calm > 18) sim.active = 0; } else sim.calm = 0; // 静かになったら早めに眠る
       }
-      drawOrb(ctx, bs, R, cap, performance.now(), orbRef.current, orbImgRef.current[g.id], goldRgb(orbRef.current));
+      drawOrb(ctx, bs, R, cap, performance.now(), orbRef.current, orbImgRef.current[g.id], goldRef.current);
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
@@ -735,6 +736,7 @@ export default function App() {
   useEffect(() => { if (goalMgr && activeIdx.length === 0) setGoalMgr(false); /* eslint-disable-next-line */ }, [activeIdx.length, goalMgr]);
   pageRef.current = curGi;
   orbRef.current = orbPal;
+  goldRef.current = goldRgb(T);
 
   const g = hasGoal ? goals[curGi] : null;
   const cnt = hasGoal ? (ballsBy.current[g?.id]?.length || 0) : 0;
