@@ -85,7 +85,7 @@ const THEMES = {
     pageBg: "#0B0509", bg: "#130A12", panel: "#130A12", surface: "#190F18", surface2: "#281828", modalBg: "#1B121C",
     hair: "rgba(255,255,255,0.07)", hair2: "rgba(255,255,255,0.13)", track: "rgba(255,255,255,0.08)", pip: "rgba(255,255,255,0.28)",
     cellGrad: "radial-gradient(circle at 50% 42%, rgba(255,255,255,0.035), rgba(255,255,255,0.01))",
-    overlayBg: "rgba(0,0,0,0.6)", scrim: "rgba(19,10,18,0.72)", hi: "#F1E7EE", lo: "#82717E", lo2: "#4B3D49", gold: "#A066A0", onGold: "#fff0fa", orb: "glass",
+    overlayBg: "rgba(0,0,0,0.6)", scrim: "rgba(19,10,18,0.72)", hi: "#F1E7EE", lo: "#82717E", lo2: "#4B3D49", gold: "#C9A24A", onGold: "#1a1a1a", orb: "glass",
   },
   light: {
     pageBg: "#D9DDE2", bg: "#FCFDFE", panel: "#EBEFF3", surface: "#F2F5F8", surface2: "#E7EBF0", modalBg: "#FFFFFF",
@@ -97,19 +97,19 @@ const THEMES = {
     pageBg: "#D7DDC8", bg: "#EBEFE0", panel: "#DCE3CC", surface: "#E2E8D6", surface2: "#D6DEC4", modalBg: "#F1F4E9",
     hair: "rgba(40,52,28,0.10)", hair2: "rgba(40,52,28,0.18)", track: "rgba(40,52,28,0.10)", pip: "rgba(40,52,28,0.3)",
     cellGrad: "radial-gradient(circle at 50% 42%, rgba(20,30,10,0.06), rgba(20,30,10,0.015))",
-    overlayBg: "rgba(28,34,20,0.45)", scrim: "rgba(235,239,224,0.68)", hi: "#26331C", lo: "#5E6B4E", lo2: "#9FAD8C", gold: "#4A8040", onGold: "#f0f7ee", orb: "bright",
+    overlayBg: "rgba(28,34,20,0.45)", scrim: "rgba(235,239,224,0.68)", hi: "#26331C", lo: "#5E6B4E", lo2: "#9FAD8C", gold: "#C9A24A", onGold: "#1a1a1a", orb: "bright",
   },
   sakura: {
     pageBg: "#EBD9DD", bg: "#FBF2F4", panel: "#F4E6E9", surface: "#F7ECEE", surface2: "#F0DFE3", modalBg: "#FFFFFF",
     hair: "rgba(60,20,32,0.09)", hair2: "rgba(60,20,32,0.16)", track: "rgba(60,20,32,0.09)", pip: "rgba(60,20,32,0.3)",
     cellGrad: "radial-gradient(circle at 50% 42%, rgba(0,0,0,0.045), rgba(0,0,0,0.012))",
-    overlayBg: "rgba(40,20,26,0.42)", scrim: "rgba(251,242,244,0.66)", hi: "#2E2026", lo: "#8A6E77", lo2: "#C2A8AF", gold: "#C45C72", onGold: "#fff0f3", orb: "bright",
+    overlayBg: "rgba(40,20,26,0.42)", scrim: "rgba(251,242,244,0.66)", hi: "#2E2026", lo: "#8A6E77", lo2: "#C2A8AF", gold: "#C9A24A", onGold: "#1a1a1a", orb: "bright",
   },
   sora: {
     pageBg: "#D7E2EE", bg: "#F1F6FC", panel: "#E5EEF7", surface: "#EAF1F9", surface2: "#DDE8F2", modalBg: "#FFFFFF",
     hair: "rgba(20,40,64,0.09)", hair2: "rgba(20,40,64,0.16)", track: "rgba(20,40,64,0.09)", pip: "rgba(20,40,64,0.3)",
     cellGrad: "radial-gradient(circle at 50% 42%, rgba(0,0,0,0.045), rgba(0,0,0,0.012))",
-    overlayBg: "rgba(20,34,50,0.42)", scrim: "rgba(241,246,252,0.66)", hi: "#1E2A36", lo: "#69788A", lo2: "#A3B4C4", gold: "#3A72B0", onGold: "#f0f5ff", orb: "bright",
+    overlayBg: "rgba(20,34,50,0.42)", scrim: "rgba(241,246,252,0.66)", hi: "#1E2A36", lo: "#69788A", lo2: "#A3B4C4", gold: "#C9A24A", onGold: "#1a1a1a", orb: "bright",
   },
 };
 const THEME_ORDER = [["dark", "墨"], ["ai", "藍"], ["budou", "葡萄"], ["light", "雪"], ["matcha", "抹茶"], ["sakura", "桜"], ["sora", "空"]];
@@ -117,9 +117,8 @@ const THEME_ORDER = [["dark", "墨"], ["ai", "藍"], ["budou", "葡萄"], ["ligh
 const ORB_GLASS = { tint: [190, 214, 242], rim: "rgba(255,255,255,0.16)", r0: 10, photoScrim: "rgba(8,9,12,0.40)", body: [[0, "rgba(255,255,255,0.05)"], [0.7, "rgba(255,255,255,0.012)"], [1, "rgba(255,255,255,0.04)"]] };
 const ORB_BRIGHT = { tint: [150, 172, 205], rim: "rgba(0,0,0,0.12)", r0: 12, shadow: "rgba(35,40,48,0.18)", photoScrim: "rgba(18,20,26,0.28)", body: [[0, "rgba(255,255,255,0.96)"], [0.5, "rgba(248,250,253,0.88)"], [1, "rgba(226,231,239,0.84)"]] };
 const PAL = [[184, 126, 112], [124, 156, 134], [188, 166, 118], [128, 142, 174], [118, 156, 160], [172, 138, 166]];
-// 達成色：T.goldをRGB配列に変換して使う
-const hexToRgb = (hex) => { const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16); return [r,g,b]; };
-const goldRgb = (T) => hexToRgb(T.gold);
+// 達成（半分以上できた日）の習慣セルを塗る金。基準goldより濃く純度の高いマットゴールド。塗りはベタ（つや消し）、光りは btnglow 側で出す
+const GOLD_FILL = [248, 181, 0];
 const HOLD = 1500;
 const DEV = false; // プロト検証用の日送り＆アニメ切替を表示（Web公開時は false）
 // 編集モード中のアイコンの動き（4案）。DEV切替で比較できる
@@ -131,13 +130,12 @@ const CX = 160, CY = 158, CR = 116, GRAV = 0.5, REST = 0.26, FRIC = 0.99;
 
 const grainR = (cap) => Math.max(5, Math.min(22, CR * Math.sqrt(0.62 / cap)));
 // 1つのオーブを描く（RAFの本描画と、隣ゴールのスナップショット生成で共用）
-function drawOrb(ctx, bs, R, cap, now, o, img, gc) {
+function drawOrb(ctx, bs, R, cap, now, o, img) {
   o = o || ORB_GLASS;
-  gc = gc || [201, 162, 74]; // gold color RGB
   const full = cap > 0 && bs.length >= cap, goldNow = full;
   ctx.clearRect(0, 0, 320, 300);
   const fill = Math.min(bs.length / (cap || 1), 1);
-  const tint = goldNow ? gc : o.tint;
+  const tint = goldNow ? [201, 162, 74] : o.tint;
   const halo = ctx.createRadialGradient(CX, CY, CR * 0.4, CX, CY, CR * 1.5);
   halo.addColorStop(0, `rgba(${tint.join(",")},${0.05 + fill * 0.12})`); halo.addColorStop(1, `rgba(${tint.join(",")},0)`);
   ctx.fillStyle = halo; ctx.fillRect(0, 0, 320, 300);
@@ -171,8 +169,8 @@ function drawOrb(ctx, bs, R, cap, now, o, img, gc) {
   }
   ctx.restore();
   if (o.spec) { const sx = CX - 38, sy = CY - 46, sr = o.specR || 64; const sp = ctx.createRadialGradient(sx, sy, 2, sx, sy, sr); sp.addColorStop(0, o.spec); sp.addColorStop(1, "rgba(255,255,255,0)"); ctx.save(); ctx.beginPath(); ctx.arc(CX, CY, CR - 0.5, 0, 7); ctx.clip(); ctx.fillStyle = sp; ctx.beginPath(); ctx.arc(sx, sy, sr, 0, 7); ctx.fill(); ctx.restore(); }
-  ctx.strokeStyle = goldNow ? `rgba(${gc.join(",")},0.5)` : o.rim; ctx.lineWidth = goldNow ? 1.6 : 1; ctx.beginPath(); ctx.arc(CX, CY, CR, 0, 7); ctx.stroke();
-  if (goldNow) { const pulse = 0.5 + 0.5 * Math.sin(now / 380); const og = ctx.createRadialGradient(CX, CY, CR * 0.85, CX, CY, CR * 1.7); og.addColorStop(0, `rgba(${gc.join(",")},${0.10 + pulse * 0.13})`); og.addColorStop(1, `rgba(${gc.join(",")},0)`); ctx.fillStyle = og; ctx.beginPath(); ctx.arc(CX, CY, CR * 1.7, 0, 7); ctx.fill(); }
+  ctx.strokeStyle = goldNow ? "rgba(201,162,74,0.5)" : o.rim; ctx.lineWidth = goldNow ? 1.6 : 1; ctx.beginPath(); ctx.arc(CX, CY, CR, 0, 7); ctx.stroke();
+  if (goldNow) { const pulse = 0.5 + 0.5 * Math.sin(now / 380); const og = ctx.createRadialGradient(CX, CY, CR * 0.85, CX, CY, CR * 1.7); og.addColorStop(0, `rgba(201,162,74,${0.10 + pulse * 0.13})`); og.addColorStop(1, "rgba(201,162,74,0)"); ctx.fillStyle = og; ctx.beginPath(); ctx.arc(CX, CY, CR * 1.7, 0, 7); ctx.fill(); }
 }
 const sectorPath = (cx, cy, r, frac) => {
   const a0 = -Math.PI / 2, a1 = a0 + frac * 2 * Math.PI;
@@ -353,8 +351,6 @@ export default function App() {
   const importRef = useRef(null);
   const [colDetail, setColDetail] = useState(null);
   const [goalDetail, setGoalDetail] = useState(null); // gi of goal whose detail page is open
-  const [detailPage, setDetailPage] = useState(0); // 0=全体, 1..n=習慣ごと
-  const dDragRef = useRef(null); // 分析モーダルのスワイプ判定
   const [now, setNow] = useState(() => todayNum()); // 現実の今日（自動更新）
   const [dayOffset, setDayOffset] = useState(0); // プロト検証用の日送り（本番では使わない）
   const day = now + dayOffset;
@@ -424,7 +420,6 @@ export default function App() {
   const dragRef = useRef(null); // 進行中ドラッグの生データ（再描画を避けるためref）
   const ballsBy = useRef({});
   const orbRef = useRef(orbPal);
-  const goldRef = useRef(goldRgb(T)); // 達成色RGB（RAF内で使う）
   const goalsRef = useRef(goals), pageRef = useRef(0);
   const audio = useRef(null), sweep = useRef(null), timer = useRef(null);
   const allClearRef = useRef(false), lastClear = useRef(false);
@@ -494,7 +489,7 @@ export default function App() {
       const oc = document.createElement("canvas"); oc.width = 320 * dpr; oc.height = 300 * dpr;
       const octx = oc.getContext("2d"); octx.scale(dpr, dpr);
       const bs = ballsBy.current[goal.id] || [], cap = capOf(goal);
-      drawOrb(octx, bs, grainR(cap || 30), cap, performance.now(), orbPal, orbImgRef.current[goal.id], goldRef.current);
+      drawOrb(octx, bs, grainR(cap || 30), cap, performance.now(), orbPal, orbImgRef.current[goal.id]);
       return oc.toDataURL();
     } catch (e) { return null; }
   };
@@ -504,7 +499,7 @@ export default function App() {
       const dpr = window.devicePixelRatio || 1;
       const oc = document.createElement("canvas"); oc.width = 320 * dpr; oc.height = 300 * dpr;
       const octx = oc.getContext("2d"); octx.scale(dpr, dpr);
-      drawOrb(octx, [], grainR(30), 0, performance.now(), orbPal, undefined, goldRef.current);
+      drawOrb(octx, [], grainR(30), 0, performance.now(), orbPal);
       return oc.toDataURL();
     } catch (e) { return null; }
   };
@@ -519,7 +514,7 @@ export default function App() {
     const step = () => {
       const gi = pageRef.current, g = goalsRef.current[gi];
       const ctx2 = cv.getContext("2d");
-      if (gi < 0 || !g) { drawOrb(ctx, [], grainR(30), 0, performance.now(), orbRef.current, undefined, goldRef.current); raf = requestAnimationFrame(step); return; }
+      if (gi < 0 || !g) { drawOrb(ctx, [], grainR(30), 0, performance.now(), orbRef.current); raf = requestAnimationFrame(step); return; }
       const cap = capOf(g);
       const R = grainR(cap || 30), bs = ballsBy.current[g.id] || [];
       const sim = simState.current[g.id] || (simState.current[g.id] = { active: 360, calm: 0 });
@@ -537,7 +532,7 @@ export default function App() {
       sim.active--;
       if (maxV2 < 0.03) { if (++sim.calm > 18) sim.active = 0; } else sim.calm = 0; // 静かになったら早めに眠る
       }
-      drawOrb(ctx, bs, R, cap, performance.now(), orbRef.current, orbImgRef.current[g.id], goldRef.current);
+      drawOrb(ctx, bs, R, cap, performance.now(), orbRef.current, orbImgRef.current[g.id]);
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
@@ -737,7 +732,6 @@ export default function App() {
   useEffect(() => { if (goalMgr && activeIdx.length === 0) setGoalMgr(false); /* eslint-disable-next-line */ }, [activeIdx.length, goalMgr]);
   pageRef.current = curGi;
   orbRef.current = orbPal;
-  goldRef.current = goldRgb(T);
 
   const g = hasGoal ? goals[curGi] : null;
   const cnt = hasGoal ? (ballsBy.current[g?.id]?.length || 0) : 0;
@@ -809,29 +803,17 @@ export default function App() {
       const nextPos = (slotPos + 1) % MAX_GOALS;
       const w = stageRef.current?.getBoundingClientRect().width || 320;
       const urls = [slotSnap(slots[prevPos]), slotSnap(slots[slotPos]), slotSnap(slots[nextPos])];
-      dr.prevPos = prevPos; dr.nextPos = nextPos; dr.w = w;
+      if (urls.some((u) => !u)) { dr.decided = "v"; return; } // 画像化できない環境はドラッグ無効
+      dr.decided = "h"; dr.w = w; dr.prevPos = prevPos; dr.nextPos = nextPos;
       try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
-      if (urls.some((u) => !u)) {
-        // 画像化できない環境：アニメ無しのフォールバック（スワイプでページ送りだけは効く）
-        dr.decided = "hf";
-      } else {
-        dr.decided = "h";
-        setDrag({ urls, w });
-      }
+      setDrag({ urls, w });
       return;
     }
     if (dr.decided === "h" && trackRef.current) trackRef.current.style.transform = `translateX(${-dr.w + (dr.x = dx)}px)`;
-    if (dr.decided === "hf") dr.x = dx;
   };
   const onStageUp = () => {
     const dr = dragRef.current; dragRef.current = null;
-    if (!dr) return;
-    if (dr.decided === "hf") {
-      const w = dr.w || 320, x = dr.x || 0;
-      if (x < -w * 0.22) setPage(dr.nextPos); else if (x > w * 0.22) setPage(dr.prevPos);
-      return;
-    }
-    if (dr.decided !== "h") return;
+    if (!dr || dr.decided !== "h") return;
     const w = dr.w, x = dr.x || 0, tr = trackRef.current;
     const commit = x < -w * 0.22 ? 1 : x > w * 0.22 ? -1 : 0; // 22%超で確定
     const finish = () => { if (commit === 1) setPage(dr.nextPos); else if (commit === -1) setPage(dr.prevPos); requestAnimationFrame(() => requestAnimationFrame(() => setDrag(null))); };
@@ -881,8 +863,7 @@ export default function App() {
     const tdc = L && L.day === day ? L.td : 0;
     const dt = dueT && tdc >= (mode === "week" ? 1 : Math.max(1, h.perDay || 1)); // 今日ぶん完了（週モードは1日1回で完了）
     const inactive = full || (!st.ok && !dt);
-    const gold = dt && allClear; // 全部終わって達成色
-    const GOLD_FILL = goldRgb(T);
+    const gold = dt && allClear; // 全部終わって金色
     const fillCol = gold ? `rgb(${GOLD_FILL.join(",")})` : `rgb(${h.c.join(",")})`;
     const type = h.type || "pos";
     const isTimed = type === "timed";
@@ -978,7 +959,7 @@ export default function App() {
   };
 
   return (
-    <div className="tsumiki-app" style={{ ...s.page, "--ac": goldRgb(T).join(",") }} onContextMenu={(e) => e.preventDefault()}>
+    <div className="tsumiki-app" style={s.page} onContextMenu={(e) => e.preventDefault()}>
       <style>{KEY}</style>
       <div style={{ ...s.screen, gap: 10, padding: "16px 20px 18px", touchAction: "none" }} onPointerDown={onStageDown} onPointerMove={onStageMove} onPointerUp={onStageUp} onPointerCancel={onStageCancel}>
         <div style={s.bar}>
@@ -995,7 +976,7 @@ export default function App() {
               <div style={s.idLabel}>なりたい自分</div>
               <div key={g.id} style={{ ...s.idName, color: full ? T.gold : T.hi, animation: "achfade .3s ease" }}>{g.name}{full ? "（なれた）" : ""}</div>
             </div>
-            <button style={s.analyzeBtn} onClick={() => { setGoalDetail(curGi); setDetailPage(0); }} aria-label="分析"><BarChart3 size={16} color={T.lo} strokeWidth={2.2} /></button>
+            <button style={s.analyzeBtn} onClick={() => setGoalDetail(curGi)} aria-label="分析"><BarChart3 size={16} color={T.lo} strokeWidth={2.2} /></button>
           </>) : (
             <div style={{ visibility: "hidden" }} aria-hidden>
               <div style={s.idLabel}>なりたい自分</div>
@@ -1041,7 +1022,7 @@ export default function App() {
             </div>
           )}
         </div>
-        
+        {allClear && <div style={s.clearLine}>✦ 今日のぶん、ぜんぶできた</div>}
 
         {/* page nav：4つの器スロット */}
         <div style={{ ...s.dots, touchAction: "none" }}
@@ -1077,8 +1058,7 @@ export default function App() {
           </div>
         ) : (
         <div style={{ ...s.habits, gap: compact === 2 ? 2 : compact === 1 ? 3 : 4 }}>
-          <div style={{ ...s.grid, gap: compact === 2 ? 4 : compact === 1 ? 8 : 12, ...(habitRows.length === 1 ? { minHeight: 220, justifyContent: "center" } : {}), position: "relative" }}>
-          {showCoach && !editMode && <div style={s.coach}>アイコンを長押しすると、器にひと粒落ちます<span style={s.coachArrow}>▾</span></div>}
+          <div style={{ ...s.grid, gap: compact === 2 ? 4 : compact === 1 ? 8 : 12 }}>
           {habitRows.map((row, ri) => {
             const two = row.length === 2; // 2個の行は画面を3分割するように散らす
             return (
@@ -1171,7 +1151,7 @@ export default function App() {
               <div style={{ margin: "2px 0" }}><MiniOrb colors={[]} size={132} done={false} /></div>
               <div style={s.introLabel}>TSUMIKI</div>
               <div style={s.introTitle}>なりたい自分を、器に。</div>
-              <div style={s.introBody}>「なりたい自分」をひとつ決めます。たとえば「いい体の自分」。それが、からっぽの器になります。</div>
+              <div style={s.introBody}>「なりたい自分」をひとつ決めます。たとえば「いい体になる」。それが、からっぽの器になります。</div>
             </>)}
             {introStep === 1 && (<>
               <div style={{ margin: "2px 0" }}><MiniOrb colors={[[128, 142, 174]]} size={132} done={false} /></div>
@@ -1204,7 +1184,7 @@ export default function App() {
               <>
                 <div style={s.mTitle}>どうなりたい？</div>
                 <div style={s.mSub}>3週間後でも1年後でもいい。なりたい自分を一言で。</div>
-                <input style={s.input} autoFocus value={wiz.name} placeholder="例：いい体の自分"
+                <input style={s.input} autoFocus value={wiz.name} placeholder="例：いい体を作る"
                   onChange={(e) => setWiz((w) => ({ ...w, name: e.target.value }))} />
                 <button style={{ ...s.create, opacity: wiz.name.trim() ? 1 : 0.4 }} disabled={!wiz.name.trim()}
                   onClick={() => setWiz((w) => ({ ...w, step: 1 }))}>次へ</button>
@@ -1214,7 +1194,7 @@ export default function App() {
             {wiz.step === 1 && (
               <>
                 <div style={s.mTitle}>何日で、なれてたい？</div>
-                <div style={s.mSub}>「{wiz.name}」になれるまでの器の大きさになります。あとから変えられます。</div>
+                <div style={s.mSub}>「{wiz.name}」になるまでの器の大きさになります。あとから変えられます。</div>
                 <div style={s.periodRow}>
                   {[{ lab: "3週間", d: 21 }, { lab: "1ヶ月", d: 30 }, { lab: "3ヶ月", d: 90 }, { lab: "半年", d: 180 }].map((p) => (
                     <button key={p.lab} style={{ ...s.periodChip, ...(wiz.days === p.d ? s.periodOn : {}) }}
@@ -1336,7 +1316,7 @@ export default function App() {
               <button style={{ ...s.iconPreview, borderColor: col }} onClick={() => setEditor((e) => ({ ...e, pickerOpen: true, pickerTab: e.draft.emoji ? "emoji" : "icon" }))}>
                 {d.emoji ? <span style={{ fontSize: 24, lineHeight: 1 }}>{d.emoji}</span> : <PrevIcon size={24} color={col} strokeWidth={2.2} />}
               </button>
-              <input style={{ ...s.input, flex: 1, fontSize: 16 }} value={d.name} placeholder="例：朝ストレッチ"
+              <input style={{ ...s.input, flex: 1, fontSize: 16 }} autoFocus value={d.name} placeholder="例：朝ストレッチ"
                 onChange={(e) => { const name = e.target.value; setD(d.iconAuto && !d.emoji ? { name, iconIdx: guessIcon(name) } : { name }); }} />
             </div>
             <button style={s.iconToggle} onClick={() => setEditor((e) => ({ ...e, pickerOpen: true, pickerTab: e.draft.emoji ? "emoji" : "icon" }))}>アイコン・絵文字を変える</button>
@@ -1437,7 +1417,7 @@ export default function App() {
         <div style={s.achOverlay}>
           <div style={s.achGlow} />
           <div style={s.achInner}>
-            <MiniOrb colors={(ballsBy.current[goals[achieved]?.id] || []).map((b) => b.c)} size={124} done goldColor={T.gold} />
+            <MiniOrb colors={(ballsBy.current[goals[achieved]?.id] || []).map((b) => b.c)} size={124} done />
             <div style={s.achLabel}>なれた自分</div>
             <div style={s.achGoal2}>{goals[achieved].name}</div>
             <div style={s.achRule} />
@@ -1547,241 +1527,75 @@ export default function App() {
           gg.habits.forEach((h, i) => { const sd = h.startDay || 0; if (d < sd) return; const L = logs[gg.id + ":" + h.id]; if (L?.hist) Object.entries(L.hist).forEach(([dd, c]) => { if (+dd <= d) act += c; }); exp += pace([h]) * (d - sd + 1); });
           ratePts.push({ d, r: exp > 0 ? Math.min(100, act / exp * 100) : 0 });
         }
-        const overallRate = ratePts.length ? Math.round(ratePts.reduce((s, p) => s + p.r, 0) / ratePts.length) : 0;
-        // 曜日別粒数（日=0..土=6）
-        const DOW_LABELS = ["日", "月", "火", "水", "木", "金", "土"];
-        const dowCounts = [0, 0, 0, 0, 0, 0, 0];
-        gg.habits.forEach((h) => {
-          const L = logs[gg.id + ":" + h.id];
-          if (!L?.hist) return;
-          Object.entries(L.hist).forEach(([dd, c]) => {
-            const absDay = +dd;
-            // todayNum() は 1970-01-01 から日数+4。日付を復元して曜日取得
-            const ms = (absDay - 4) * 86400000;
-            const dow = new Date(ms).getUTCDay();
-            dowCounts[dow] += c;
-          });
-        });
-        const dowMax = Math.max(1, ...dowCounts);
-
-        // 習慣ごと推移グラフ：移動平均方式（開始日〜今日全表示、nはその日までの経過日数）
-        const habitRatePts = (h) => {
-          const sd = h.startDay || 0;
-          const L = logs[gg.id + ":" + h.id];
-          const histByDay = {};
-          if (L?.hist) Object.entries(L.hist).forEach(([dd, c]) => { histByDay[+dd] = c; });
-          const p = pace([h]);
-          const pts = [];
-          for (let d = sd; d <= day; d++) {
-            const n = d - sd + 1;
-            let completedDays = 0;
-            for (let k = sd; k <= d; k++) {
-              const c = histByDay[k] || 0;
-              completedDays += p > 0 ? Math.min(1, c / p) : 0;
-            }
-            pts.push({ d, r: Math.min(100, completedDays / n * 100) });
-          }
-          return pts;
-        };
-
-        const totalPages = 1 + gg.habits.length;
-        const dp = Math.min(detailPage, totalPages - 1);
-        dDragRef.current = { total: totalPages };
-
-        // SVGグラフ共通
-        const GCW = 300, GCH = 80, GPX = 6, GPY = 8;
-        const gXof = (i, n) => GPX + (n <= 1 ? (GCW - 2 * GPX) / 2 : i / (n - 1) * (GCW - 2 * GPX));
-        const gYof = (r) => GCH - GPY - (r / 100) * (GCH - 2 * GPY);
-        const makeLinePts = (pts) => pts.map((p, i) => `${gXof(i, pts.length).toFixed(1)},${gYof(p.r).toFixed(1)}`).join(" ");
-        const makeAreaPts = (pts) => { const lp = makeLinePts(pts); const n = pts.length; return `${gXof(0, n).toFixed(1)},${GCH - GPY} ${lp} ${gXof(n - 1, n).toFixed(1)},${GCH - GPY}`; };
-        const dateLabel = (absDay) => { const dt = new Date(); dt.setDate(dt.getDate() + (absDay - now)); return `${dt.getMonth() + 1}/${dt.getDate()}`; };
-
+        const overallRate = ratePts.length ? Math.round(ratePts[ratePts.length - 1].r) : 0;
+        const CW = 300, CH = 84, PX = 6, PY = 8, np = ratePts.length;
+        const xOf = (i) => PX + (np <= 1 ? (CW - 2 * PX) / 2 : i / (np - 1) * (CW - 2 * PX));
+        const yOf = (r) => CH - PY - (r / 100) * (CH - 2 * PY);
+        const linePts = ratePts.map((p, i) => `${xOf(i).toFixed(1)},${yOf(p.r).toFixed(1)}`).join(" ");
+        const areaPts = `${xOf(0).toFixed(1)},${CH - PY} ${linePts} ${xOf(np - 1).toFixed(1)},${CH - PY}`;
         return (
           <div style={s.overlay} onClick={() => setGoalDetail(null)}>
-            <div style={{ ...s.modal, maxHeight: "88vh", overflowY: "hidden", padding: 0 }} onClick={(e) => e.stopPropagation()}>
-
-              {/* ヘッダー：器名 + ページドット */}
-              <div style={{ padding: "18px 20px 12px", borderBottom: `1px solid ${T.hair}` }}>
-                <div style={{ textAlign: "center", marginBottom: 10 }}>
-                  <div style={s.idLabel}>{doneD ? "なれた自分" : "なりたい自分"}</div>
-                  <div style={{ ...s.mTitle, fontSize: 19, marginTop: 2, color: doneD ? T.gold : T.hi }}>{gg.name}</div>
-                </div>
-                {/* ページインジケーター */}
-                <div style={{ display: "flex", justifyContent: "center", gap: 6 }}>
-                  {Array.from({ length: totalPages }).map((_, i) => (
-                    <button key={i} onClick={() => setDetailPage(i)} style={{ width: i === dp ? 18 : 7, height: 7, borderRadius: 999, background: i === dp ? T.gold : T.hair2, border: "none", padding: 0, cursor: "pointer", transition: "width .2s, background .2s" }} />
-                  ))}
+            <div style={{ ...s.modal, maxHeight: "88vh", overflowY: "auto" }} onClick={(e) => e.stopPropagation()}>
+              <div style={{ display: "flex", justifyContent: "center" }}><MiniOrb colors={colors} size={150} done={doneD} /></div>
+              <div style={{ textAlign: "center" }}>
+                <div style={s.idLabel}>{doneD ? "なれた自分" : "なりたい自分"}</div>
+                <div style={{ ...s.mTitle, fontSize: 21, marginTop: 4, color: doneD ? T.gold : T.hi }}>{gg.name}</div>
+              </div>
+              <div style={s.gdProg}>
+                <div style={s.gdBarBg}><div style={{ ...s.gdBarFill, width: pct + "%", background: doneD ? T.gold : "rgba(190,214,242,0.85)" }} /></div>
+                <div style={s.gdProgRow}><span>{cntD} / {capD} 粒</span><span>{pct}%</span></div>
+              </div>
+              <div style={s.gdStats}>
+                <div style={s.gdStat}><div style={s.gdStatN}>{remain}</div><div style={s.gdStatL}>のこり粒</div></div>
+                <div style={s.gdStat}><div style={s.gdStatN}>{doneD ? "—" : (estDays != null ? `約${estDays}` : "—")}</div><div style={s.gdStatL}>この調子で日</div></div>
+                <div style={s.gdStat}><div style={{ ...s.gdStatN, color: T.gold }}>{overallRate}%</div><div style={s.gdStatL}>達成率</div></div>
+              </div>
+              <div style={s.field}>
+                <label style={s.lab}>達成率の推移</label>
+                <div style={s.chartWrap}>
+                  <svg viewBox={`0 0 ${CW} ${CH}`} style={{ width: "100%", display: "block" }}>
+                    <line x1={PX} y1={yOf(100)} x2={CW - PX} y2={yOf(100)} stroke={T.hair2} strokeWidth="1" />
+                    <line x1={PX} y1={yOf(50)} x2={CW - PX} y2={yOf(50)} stroke={T.hair} strokeWidth="1" strokeDasharray="3 4" />
+                    <polygon points={areaPts} fill="rgba(201,162,74,0.12)" />
+                    <polyline points={linePts} fill="none" stroke="rgb(201,162,74)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+                    <circle cx={xOf(np - 1)} cy={yOf(ratePts.length ? ratePts[np - 1].r : 0)} r="3.2" fill="rgb(201,162,74)" />
+                  </svg>
+                  <div style={s.chartFoot}><span>{(() => { const dt = new Date(); dt.setDate(dt.getDate() + (start - now)); return `${dt.getMonth() + 1}/${dt.getDate()}`; })()}</span><span>{dayOffset === 0 ? "今日" : (() => { const dt = new Date(); dt.setDate(dt.getDate() + dayOffset); return `${dt.getMonth() + 1}/${dt.getDate()}`; })()}</span></div>
                 </div>
               </div>
-
-              {/* スクロール本体（横スワイプでページ送り） */}
-              <div
-                key={dp}
-                ref={(el) => {
-                  if (!el || el._swipeBound) return;
-                  el._swipeBound = true;
-                  let sx = 0, sy = 0, decided = null, dxv = 0;
-                  el.addEventListener("touchstart", (e) => {
-                    const t = e.touches[0]; sx = t.clientX; sy = t.clientY; decided = null; dxv = 0;
-                  }, { passive: true });
-                  el.addEventListener("touchmove", (e) => {
-                    const t = e.touches[0];
-                    const dx = t.clientX - sx, dy = t.clientY - sy;
-                    if (decided == null) {
-                      if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
-                      decided = Math.abs(dx) > Math.abs(dy) * 1.3 ? "h" : "v";
-                    }
-                    if (decided === "h") { dxv = dx; e.preventDefault(); }
-                  }, { passive: false });
-                  el.addEventListener("touchend", () => {
-                    if (decided === "h") {
-                      const tot = dDragRef.current.total;
-                      if (dxv < -50) setDetailPage((p) => (p + 1) % tot);
-                      else if (dxv > 50) setDetailPage((p) => (p - 1 + tot) % tot);
-                    }
-                    decided = null;
-                  });
-                }}
-                style={{ overflowY: "auto", overflowX: "hidden", padding: "16px 20px 16px", display: "flex", flexDirection: "column", gap: 14, maxHeight: "calc(88vh - 160px)", animation: "dpSlide .26s cubic-bezier(.22,1,.3,1)" }}
-              >
-
-                {dp === 0 ? (
-                  /* ── p.0 全体サマリー ── */
-                  <>
-                    {/* 進捗バー */}
-                    <div style={s.gdProg}>
-                      <div style={s.gdBarBg}><div style={{ ...s.gdBarFill, width: pct + "%", background: doneD ? T.gold : "rgba(190,214,242,0.85)" }} /></div>
-                      <div style={s.gdProgRow}><span>{cntD} / {capD} 粒</span><span>{pct}%</span></div>
-                    </div>
-                    {/* 3統計 */}
-                    <div style={s.gdStats}>
-                      <div style={s.gdStat}><div style={s.gdStatN}>{remain}</div><div style={s.gdStatL}>のこり粒</div></div>
-                      <div style={s.gdStat}><div style={s.gdStatN}>{doneD ? "—" : (estDays != null ? `約${estDays}` : "—")}</div><div style={s.gdStatL}>この調子で日</div></div>
-                      <div style={s.gdStat}><div style={{ ...s.gdStatN, color: T.gold }}>{overallRate}%</div><div style={s.gdStatL}>平均達成率</div></div>
-                    </div>
-                    {/* 達成率の推移（折れ線） */}
-                    <div>
-                      <label style={s.lab}>達成率の推移</label>
-                      <div style={s.chartWrap}>
-                        <svg viewBox={`0 0 ${GCW} ${GCH}`} style={{ width: "100%", display: "block" }}>
-                          <line x1={GPX} y1={gYof(100)} x2={GCW - GPX} y2={gYof(100)} stroke={T.hair2} strokeWidth="1" />
-                          <line x1={GPX} y1={gYof(50)} x2={GCW - GPX} y2={gYof(50)} stroke={T.hair} strokeWidth="1" strokeDasharray="3 4" />
-                          <polygon points={makeAreaPts(ratePts)} fill={`${T.gold}1f`} />
-                          <polyline points={makeLinePts(ratePts)} fill="none" stroke="rgb(201,162,74)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-                          {ratePts.length > 0 && <circle cx={gXof(ratePts.length - 1, ratePts.length)} cy={gYof(ratePts[ratePts.length - 1].r)} r="3.2" fill="rgb(201,162,74)" />}
-                        </svg>
-                        <div style={s.chartFoot}><span>{dateLabel(start)}</span><span>{dayOffset === 0 ? "今日" : dateLabel(day)}</span></div>
+              <div style={s.field}>
+                <label style={s.lab}>習慣ごと</label>
+                {gg.habits.map((h, i) => {
+                  const L = logs[gg.id + ":" + h.id] || {};
+                  const cnt = (ballsBy.current[gg.id] || []).filter((b) => b.hid === h.id).length;
+                  const si = streakInfo(h, L, day); const cur = si.cur, best = si.best, su = si.unit;
+                  const hpace = pace([h]);
+                  const elapsedH = Math.max(1, day - (h.startDay || 0) + 1);
+                  const hdone = L.hist ? Object.values(L.hist).reduce((a, b) => a + b, 0) : 0;
+                  const rate = hpace > 0 ? Math.min(100, Math.round(hdone / (hpace * elapsedH) * 100)) : 0;
+                  const tl = typeLabel(h);
+                  return (
+                    <div key={i} style={s.gdHabit2}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ ...s.compDot, background: `rgb(${h.c.join(",")})` }} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={s.gdHName}>{h.name}</div>
+                          <div style={s.gdHSub}>{freqLabel(h)}{tl ? "・" + tl : ""}</div>
+                        </div>
+                        <span style={s.compN}>{cnt}粒</span>
+                      </div>
+                      <div style={s.statRow}>
+                        <div style={s.statCell}><span style={s.statNum}>{rate}%</span><span style={s.statLab}>達成率</span></div>
+                        <div style={s.statCell}><span style={s.statNum}>{cur}<span style={s.statU}>{su}</span></span><span style={s.statLab}>現在</span></div>
+                        <div style={s.statCell}><span style={{ ...s.statNum, color: T.gold }}>{best}<span style={s.statU}>{su}</span></span><span style={s.statLab}>最高</span></div>
                       </div>
                     </div>
-                    {/* 曜日別粒数（棒グラフ） */}
-                    <div>
-                      <label style={s.lab}>曜日別の粒数</label>
-                      <div style={s.chartWrap}>
-                        <svg viewBox="0 0 300 72" style={{ width: "100%", display: "block" }}>
-                          {DOW_LABELS.map((lbl, i) => {
-                            const bw = 26, gap = (300 - 7 * bw) / 8, x = gap + i * (bw + gap);
-                            const barH = dowCounts[i] / dowMax * 48;
-                            const isToday = new Date().getDay() === i;
-                            const col = isToday ? "rgb(201,162,74)" : T.hair2;
-                            const barFill = isToday ? "rgb(201,162,74)" : `rgba(${T.hi === "#F2EFE9" ? "242,239,233" : "100,110,130"},0.35)`;
-                            return (
-                              <g key={i}>
-                                <rect x={x} y={56 - barH} width={bw} height={Math.max(barH, 2)} rx="4" fill={barFill} />
-                                <text x={x + bw / 2} y={70} textAnchor="middle" fontSize="10" fill={col} fontFamily="ui-monospace, monospace">{lbl}</text>
-                              </g>
-                            );
-                          })}
-                        </svg>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  /* ── p.1〜n 習慣ごと ── */
-                  (() => {
-                    const h = gg.habits[dp - 1];
-                    if (!h) return null;
-                    const L = logs[gg.id + ":" + h.id] || {};
-                    const hCnt = (ballsBy.current[gg.id] || []).filter((b) => b.hid === h.id).length;
-                    const si = streakInfo(h, L, day);
-                    const tl = typeLabel(h);
-                    const hPts = habitRatePts(h);
-                    const hRate = hPts.length ? Math.round(hPts[hPts.length - 1].r) : 0;
-                    const hStartDay = h.startDay || 0;
-                    const hMidDay = Math.round((hStartDay + day) / 2);
-                    // この習慣の曜日別粒数
-                    const hDow = [0, 0, 0, 0, 0, 0, 0];
-                    if (L.hist) Object.entries(L.hist).forEach(([dd, c]) => { const dw = new Date((+dd - 4) * 86400000).getUTCDay(); hDow[dw] += c; });
-                    const hDowMax = Math.max(1, ...hDow);
-                    return (
-                      <>
-                        {/* 習慣ヘッダー */}
-                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                          <div style={{ width: 44, height: 44, borderRadius: "50%", background: T.surface2, border: `2px solid rgb(${h.c.join(",")})`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                            {h.emoji ? <span style={{ fontSize: 22 }}>{h.emoji}</span> : <h.Icon size={20} color={`rgb(${h.c.join(",")})`} strokeWidth={2.2} />}
-                          </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={s.gdHName}>{h.name}</div>
-                            <div style={s.gdHSub}>{freqLabel(h)}{tl ? "・" + tl : ""}</div>
-                          </div>
-                          <span style={s.compN}>{hCnt}粒</span>
-                        </div>
-                        {/* 3統計 */}
-                        <div style={s.gdStats}>
-                          <div style={s.gdStat}><div style={{ ...s.gdStatN, color: T.gold }}>{hRate}%</div><div style={s.gdStatL}>達成率</div></div>
-                          <div style={s.gdStat}><div style={s.gdStatN}>{si.cur}<span style={{ fontSize: 13 }}>{si.unit}</span></div><div style={s.gdStatL}>現在のストリーク</div></div>
-                          <div style={s.gdStat}><div style={{ ...s.gdStatN, color: T.gold }}>{si.best}<span style={{ fontSize: 13 }}>{si.unit}</span></div><div style={s.gdStatL}>最高ストリーク</div></div>
-                        </div>
-                        {/* 達成率の推移 */}
-                        <div>
-                          <label style={s.lab}>達成率の推移</label>
-                          <div style={s.chartWrap}>
-                            <svg viewBox={`0 0 ${GCW} ${GCH}`} style={{ width: "100%", display: "block" }}>
-                              <line x1={GPX} y1={gYof(100)} x2={GCW - GPX} y2={gYof(100)} stroke={T.hair2} strokeWidth="1" />
-                              <line x1={GPX} y1={gYof(50)} x2={GCW - GPX} y2={gYof(50)} stroke={T.hair} strokeWidth="1" strokeDasharray="3 4" />
-                              <polygon points={makeAreaPts(hPts)} fill={`rgba(${h.c.join(",")},0.12)`} />
-                              <polyline points={makeLinePts(hPts)} fill="none" stroke={`rgb(${h.c.join(",")})`} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-                              {hPts.length > 0 && <circle cx={gXof(hPts.length - 1, hPts.length)} cy={gYof(hPts[hPts.length - 1].r)} r="3.2" fill={`rgb(${h.c.join(",")})`} />}
-                            </svg>
-                            <div style={{ ...s.chartFoot, justifyContent: "space-between" }}>
-                              <span>{dateLabel(hStartDay)}</span>
-                              <span style={{ color: T.lo2 }}>{dateLabel(hMidDay)}</span>
-                              <span>{dayOffset === 0 ? "今日" : dateLabel(day)}</span>
-                            </div>
-                          </div>
-                        </div>
-                        {/* 曜日別の粒数 */}
-                        <div>
-                          <label style={s.lab}>曜日別の粒数</label>
-                          <div style={s.chartWrap}>
-                            <svg viewBox="0 0 300 72" style={{ width: "100%", display: "block" }}>
-                              {DOW_LABELS.map((lbl, i) => {
-                                const bw = 26, gap = (300 - 7 * bw) / 8, x = gap + i * (bw + gap);
-                                const barH = hDow[i] / hDowMax * 48;
-                                const isToday = new Date().getDay() === i;
-                                const hcol = `rgb(${h.c.join(",")})`;
-                                const barFill = hDow[i] > 0 ? `rgba(${h.c.join(",")},${isToday ? 1 : 0.55})` : T.hair2;
-                                return (
-                                  <g key={i}>
-                                    <rect x={x} y={56 - barH} width={bw} height={Math.max(barH, 2)} rx="4" fill={barFill} />
-                                    <text x={x + bw / 2} y={70} textAnchor="middle" fontSize="10" fill={isToday ? hcol : T.lo} fontFamily="ui-monospace, monospace">{lbl}</text>
-                                  </g>
-                                );
-                              })}
-                            </svg>
-                          </div>
-                        </div>
-                      </>
-                    );
-                  })()
-                )}
+                  );
+                })}
               </div>
-
-              {/* フッターボタン */}
-              <div style={{ padding: "12px 20px 16px", borderTop: `1px solid ${T.hair}` }}>
-                <div style={s.navRow}>
-                  <button style={{ ...s.back, flex: 1 }} onClick={() => { setGoalDetail(null); setPage(Math.max(0, activeIdx.indexOf(gi))); setEditList(true); }}>ゴールを編集</button>
-                  <button style={{ ...s.create, flex: 1 }} onClick={() => setGoalDetail(null)}>閉じる</button>
-                </div>
+              <div style={s.navRow}>
+                <button style={{ ...s.back, flex: 1 }} onClick={() => { setGoalDetail(null); setPage(Math.max(0, activeIdx.indexOf(gi))); setEditList(true); }}>ゴールを編集</button>
+                <button style={{ ...s.create, flex: 1 }} onClick={() => setGoalDetail(null)}>閉じる</button>
               </div>
             </div>
           </div>
@@ -1801,7 +1615,7 @@ export default function App() {
   );
 }
 
-function MiniOrb({ colors, size = 96, done = true, goldColor = "#C9A24A" }) {
+function MiniOrb({ colors, size = 96, done = true }) {
   const mgId = useRef("mg_" + uid()).current;
   const cx = size / 2, cy = size / 2, R = size / 2 - 5;
   const n = Math.min(colors.length, 30);
@@ -1812,8 +1626,8 @@ function MiniOrb({ colors, size = 96, done = true, goldColor = "#C9A24A" }) {
     const c = colors[Math.floor(i / n * colors.length)] || [200, 200, 200];
     dots.push(<circle key={i} cx={x} cy={y} r={3.1} fill={`rgb(${c.join(",")})`} opacity="0.9" />);
   }
-  const rim = done ? `${goldColor}80` : "rgba(255,255,255,0.18)";
-  const glow = done ? goldColor : "#BFD6F2";
+  const rim = done ? "rgba(201,162,74,0.5)" : "rgba(255,255,255,0.18)";
+  const glow = done ? "#C9A24A" : "#BFD6F2";
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       <defs><radialGradient id={mgId}><stop offset="0%" stopColor={glow} stopOpacity="0.22" /><stop offset="100%" stopColor={glow} stopOpacity="0" /></radialGradient></defs>
@@ -1825,17 +1639,17 @@ function MiniOrb({ colors, size = 96, done = true, goldColor = "#C9A24A" }) {
 }
 
 const mkRaw = (T) => ({
-  page: { height: "100%", background: T.bg, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "calc(env(safe-area-inset-top, 0px) + 8px)", paddingRight: 10, paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 10px)", paddingLeft: 10, boxSizing: "border-box", overflow: "hidden", fontFamily: 'system-ui, -apple-system, "Hiragino Kaku Gothic ProN", sans-serif', color: T.hi },
-  screen: { width: "100%", maxWidth: 430, flex: 1, minHeight: 0, boxSizing: "border-box", overflow: "hidden", overscrollBehavior: "none", padding: "16px 20px 18px", display: "flex", flexDirection: "column", gap: 10 },
+  page: { height: "100%", background: T.pageBg, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "calc(env(safe-area-inset-top, 0px) + 8px)", paddingRight: 10, paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 10px)", paddingLeft: 10, boxSizing: "border-box", overflow: "hidden", fontFamily: 'system-ui, -apple-system, "Hiragino Kaku Gothic ProN", sans-serif', color: T.hi },
+  screen: { width: "100%", maxWidth: 430, flex: 1, minHeight: 0, boxSizing: "border-box", overflow: "hidden", overscrollBehavior: "none", background: T.bg, borderRadius: 24, padding: "16px 20px 18px", border: `1px solid ${T.hair}`, display: "flex", flexDirection: "column", gap: 10 },
   bar: { display: "flex", justifyContent: "space-between", alignItems: "center" },
   wordmark: { fontFamily: "ui-monospace, Menlo, monospace", fontSize: 12, letterSpacing: 3, color: T.lo },
   mono: { fontFamily: "ui-monospace, Menlo, monospace", fontSize: 12, letterSpacing: 1, color: T.gold },
   idBlock: { display: "flex", alignItems: "center", gap: 10, paddingTop: 2 },
   analyzeBtn: { width: 34, height: 34, borderRadius: 999, border: `1px solid ${T.hair2}`, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, padding: 0 },
-  habits: { display: "flex", flexDirection: "column", gap: 4, position: "relative" },
+  habits: { display: "flex", flexDirection: "column", gap: 4 },
   habitTools: { display: "flex", justifyContent: "flex-start", alignItems: "center" },
   animChip: { background: "transparent", border: `1px solid ${T.hair2}`, color: T.lo, borderRadius: 999, padding: "4px 9px", fontSize: 11, cursor: "pointer", fontFamily: "inherit" },
-  animChipOn: { borderColor: T.gold, color: T.gold, background: `${T.gold}1a` },
+  animChipOn: { borderColor: T.gold, color: T.gold, background: "rgba(201,162,74,0.1)" },
   editIcon: { width: 30, height: 30, borderRadius: 999, border: `1px solid ${T.hair2}`, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0 },
   editIconOn: { background: T.gold, borderColor: T.gold },
   editBadge: { position: "absolute", top: -4, left: -4, width: 22, height: 22, borderRadius: 999, background: T.gold, border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, zIndex: 3, boxShadow: "0 1px 5px rgba(0,0,0,0.45)", animation: "badgePop .62s cubic-bezier(.2,.8,.3,1) both" },
@@ -1880,22 +1694,22 @@ const mkRaw = (T) => ({
   introTitle: { fontSize: 19, fontWeight: 700, color: T.hi, letterSpacing: 0.5 },
   introBody: { fontSize: 13.5, color: T.lo, lineHeight: 1.75 },
   introSkip: { background: "transparent", border: "none", color: T.lo2, fontSize: 12, cursor: "pointer", fontFamily: "inherit", padding: 4 },
-  coach: { position: "absolute", top: 8, left: "50%", transform: "translateX(-50%)", zIndex: 5, whiteSpace: "nowrap", maxWidth: "92%", overflow: "hidden", textOverflow: "ellipsis", background: `${T.gold}1f`, border: `1px solid ${T.gold}`, color: T.gold, borderRadius: 999, padding: "7px 14px", fontSize: 11.5, fontWeight: 600, textAlign: "center", animation: "coachpulse 1.8s ease-in-out infinite" },
+  coach: { position: "relative", alignSelf: "center", background: "rgba(201,162,74,0.12)", border: `1px solid ${T.gold}`, color: T.gold, borderRadius: 999, padding: "7px 14px", fontSize: 12, fontWeight: 600, textAlign: "center", marginBottom: 2, animation: "coachpulse 1.8s ease-in-out infinite" },
   coachArrow: { position: "absolute", bottom: -9, left: "50%", transform: "translateX(-50%)", color: T.gold, fontSize: 13, lineHeight: 1 },
   addBtn: { background: T.surface2, border: `1px solid ${T.hair2}`, color: T.hi, borderRadius: 10, padding: "0 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" },
   hList: { display: "flex", flexDirection: "column", gap: 7, maxHeight: 168, overflowY: "auto" },
   hChip: { display: "flex", alignItems: "center", gap: 9, background: T.surface, border: `1px solid ${T.hair}`, borderRadius: 10, padding: "9px 11px", fontSize: 13 },
-  freqTag: { background: `${T.gold}1f`, border: `1px solid ${T.gold}4d`, color: T.gold, borderRadius: 6, padding: "2px 8px", fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" },
+  freqTag: { background: "rgba(201,162,74,0.12)", border: `1px solid rgba(201,162,74,0.3)`, color: T.gold, borderRadius: 6, padding: "2px 8px", fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" },
   rm: { background: "transparent", border: "none", color: T.lo, fontSize: 16, cursor: "pointer", lineHeight: 1, padding: "0 2px" },
   empty: { fontSize: 12, color: T.lo2, textAlign: "center", padding: "10px 0" },
   navRow: { display: "flex", gap: 8 },
   back: { background: "transparent", border: `1px solid ${T.hair2}`, color: T.lo, borderRadius: 12, padding: "13px 18px", fontSize: 13, cursor: "pointer", fontFamily: "inherit" },
   periodRow: { display: "flex", gap: 7 },
   periodChip: { flex: 1, background: "transparent", border: `1px solid ${T.hair2}`, color: T.lo, borderRadius: 9, padding: "9px 0", fontSize: 12.5, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" },
-  periodOn: { borderColor: T.gold, color: T.gold, background: `${T.gold}14` },
+  periodOn: { borderColor: T.gold, color: T.gold, background: "rgba(201,162,74,0.08)" },
   typeRow: { display: "flex", gap: 8 },
   typeBtn: { flex: 1, display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", border: `1px solid ${T.hair2}`, borderRadius: 12, padding: "13px 0", cursor: "pointer", fontFamily: "inherit" },
-  typeBtnOn: { borderColor: T.gold, background: `${T.gold}14` },
+  typeBtnOn: { borderColor: T.gold, background: "rgba(201,162,74,0.08)" },
   typeDesc: { fontSize: 11.5, color: T.lo, textAlign: "center", lineHeight: 1.5, marginTop: -8 },
   nameRow: { display: "flex", alignItems: "center", gap: 11 },
   iconPreview: { width: 50, height: 50, borderRadius: "50%", border: "2px solid", background: T.surface, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, padding: 0 },
@@ -1910,26 +1724,26 @@ const mkRaw = (T) => ({
   mvBtn: { background: "transparent", border: "none", color: T.lo, fontSize: 13, cursor: "pointer", padding: "0 3px" },
   iconGrid: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 6, maxHeight: 200, overflowY: "auto", paddingRight: 2 },
   iconCell: { aspectRatio: "1", display: "flex", alignItems: "center", justifyContent: "center", background: T.surface, border: `1px solid ${T.hair}`, borderRadius: 9, cursor: "pointer" },
-  iconOn: { borderColor: T.gold, background: `${T.gold}14` },
+  iconOn: { borderColor: T.gold, background: "rgba(201,162,74,0.08)" },
   emojiGrid: { display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gap: 5, maxHeight: 168, overflowY: "auto", paddingRight: 2 },
   emojiCell: { aspectRatio: "1", display: "flex", alignItems: "center", justifyContent: "center", background: T.surface, border: `1px solid ${T.hair}`, borderRadius: 8, cursor: "pointer" },
   swRow: { display: "flex", gap: 9, flexWrap: "wrap" },
   sw: { width: 26, height: 26, borderRadius: 999, border: "none", cursor: "pointer", padding: 0 },
   wd: { flex: 1, background: T.surface, border: `1px solid ${T.hair}`, color: T.lo, borderRadius: 8, padding: "8px 0", fontSize: 12, cursor: "pointer", fontFamily: "inherit" },
-  wdOn: { borderColor: T.gold, color: T.gold, background: `${T.gold}1a` },
+  wdOn: { borderColor: T.gold, color: T.gold, background: "rgba(201,162,74,0.1)" },
   toggle: { width: 40, height: 24, borderRadius: 999, border: "none", cursor: "pointer", position: "relative", padding: 0, transition: "background .2s" },
   knob: { position: "absolute", top: 3, left: 3, width: 18, height: 18, borderRadius: 999, background: "#fff", transition: "transform .2s", boxShadow: "0 1px 3px rgba(0,0,0,0.3)" },
   achOverlay: { position: "fixed", inset: 0, background: "radial-gradient(ellipse at center, #14110A 0%, #060607 70%)", display: "flex", alignItems: "center", justifyContent: "center", padding: 28, zIndex: 60, animation: "achfade .6s ease" },
-  achGlow: { position: "absolute", width: 460, height: 460, borderRadius: "50%", background: `radial-gradient(circle, ${T.gold}38 0%, ${T.gold}00 65%)`, animation: "achglow 3s ease-in-out infinite" },
+  achGlow: { position: "absolute", width: 460, height: 460, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,162,74,0.22) 0%, rgba(201,162,74,0) 65%)", animation: "achglow 3s ease-in-out infinite" },
   achInner: { position: "relative", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, textAlign: "center", maxWidth: 360, width: "100%", animation: "achrise .8s cubic-bezier(.2,1,.3,1)" },
   achLabel: { fontFamily: "ui-monospace, monospace", fontSize: 11, letterSpacing: 4, color: T.gold, opacity: 0.7 },
-  achBig: { fontSize: 56, fontWeight: 800, color: T.gold, letterSpacing: 2, textShadow: `0 0 40px ${T.gold}80`, lineHeight: 1.1 },
+  achBig: { fontSize: 56, fontWeight: 800, color: T.gold, letterSpacing: 2, textShadow: "0 0 40px rgba(201,162,74,0.5)", lineHeight: 1.1 },
   achGoal: { fontSize: 19, fontWeight: 600, color: SK_HI, marginTop: 6 },
-  achGoal2: { fontSize: 27, fontWeight: 800, color: T.gold, letterSpacing: 1, lineHeight: 1.25, marginTop: 2, textShadow: `0 0 30px ${T.gold}66` },
-  achRule: { width: 40, height: 1, background: `${T.gold}73`, margin: "10px 0 4px" },
+  achGoal2: { fontSize: 27, fontWeight: 800, color: T.gold, letterSpacing: 1, lineHeight: 1.25, marginTop: 2, textShadow: "0 0 30px rgba(201,162,74,0.4)" },
+  achRule: { width: 40, height: 1, background: "rgba(201,162,74,0.45)", margin: "10px 0 4px" },
   achSub: { fontFamily: "ui-monospace, monospace", fontSize: 12, color: SK_LO, marginBottom: 8 },
   achClose: { background: "transparent", border: "none", color: SK_LO, fontSize: 12, cursor: "pointer", marginTop: 4, fontFamily: "inherit" },
-  colBtn: { background: `${T.gold}1a`, border: `1px solid ${T.gold}4d`, color: T.gold, borderRadius: 999, padding: "5px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "ui-monospace, monospace" },
+  colBtn: { background: "rgba(201,162,74,0.1)", border: `1px solid rgba(201,162,74,0.3)`, color: T.gold, borderRadius: 999, padding: "5px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "ui-monospace, monospace" },
   iconBtn: { background: "transparent", border: "none", padding: 4, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" },
   setSection: { fontSize: 12, fontWeight: 700, color: T.gold, letterSpacing: 0.4, marginBottom: 6 },
   swatchRow: { display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 18 },
@@ -1961,7 +1775,7 @@ const mkRaw = (T) => ({
   achNote: { fontSize: 11.5, color: T.gold, opacity: 0.8, marginTop: -2, marginBottom: 4 },
   noHabits: { display: "flex", flexDirection: "column", alignItems: "center", gap: 14, padding: "20px 24px 8px", textAlign: "center" },
   noHabitsTxt: { fontSize: 13.5, color: T.lo, lineHeight: 1.8 },
-  streakBadge: { position: "absolute", top: -3, right: -4, background: T.gold, color: T.onGold, borderRadius: 999, minWidth: 18, height: 18, padding: "0 5px", display: "flex", alignItems: "center", justifyContent: "center", gap: 1, fontSize: 11, fontWeight: 800, fontFamily: "ui-monospace, monospace", boxShadow: `0 0 10px ${T.gold}80` },
+  streakBadge: { position: "absolute", top: -3, right: -4, background: T.gold, color: T.onGold, borderRadius: 999, minWidth: 18, height: 18, padding: "0 5px", display: "flex", alignItems: "center", justifyContent: "center", gap: 1, fontSize: 11, fontWeight: 800, fontFamily: "ui-monospace, monospace", boxShadow: "0 0 10px rgba(201,162,74,0.5)" },
   linkBadge: { position: "absolute", top: -3, left: -4, width: 18, height: 18, borderRadius: 999, background: T.surface, border: `1px solid ${T.hair2}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", textDecoration: "none", zIndex: 2 },
   clearLine: { textAlign: "center", color: T.gold, fontSize: 12.5, fontWeight: 600, letterSpacing: 1, marginTop: -6, marginBottom: 2, animation: "achfade .5s ease" },
   gdProg: { marginTop: 4 },
@@ -1993,10 +1807,9 @@ const KEY = `.tsumiki-app, .tsumiki-app * { -webkit-tap-highlight-color: transpa
 .tsumiki-app img { -webkit-user-drag: none; user-drag: none; }
 @keyframes fillring { to { stroke-dashoffset: 0; } }
 @keyframes achfade { from { opacity: 0 } to { opacity: 1 } }
-@keyframes dpSlide { from { opacity: 0; transform: translateX(8px) } to { opacity: 1; transform: translateX(0) } }
 @keyframes achrise { 0% { opacity: 0; transform: translateY(16px) scale(.96) } 100% { opacity: 1; transform: translateY(0) scale(1) } }
 @keyframes achglow { 0%,100% { transform: scale(.9); opacity: .7 } 50% { transform: scale(1.08); opacity: 1 } }
-@keyframes btnglow { 0%,100% { box-shadow: 0 0 6px rgba(var(--ac),0.25) } 50% { box-shadow: 0 0 22px 3px rgba(var(--ac),0.6) } }
+@keyframes btnglow { 0%,100% { box-shadow: 0 0 6px rgba(201,162,74,0.25) } 50% { box-shadow: 0 0 22px 3px rgba(201,162,74,0.6) } }
 @keyframes em1 { 0% { transform: rotate(-3.4deg) translate(-1.4px, -0.6px) } 50% { transform: rotate(3.4deg) translate(1.4px, 0.6px) } 100% { transform: rotate(-3.4deg) translate(-1.4px, -0.6px) } }
 @keyframes em2 { 0%,100% { transform: scale(1) } 50% { transform: scale(1.09) } }
 @keyframes em3 { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-4px) } }
