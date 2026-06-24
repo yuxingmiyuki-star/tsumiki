@@ -546,6 +546,11 @@ export default function App() {
     const step = () => {
       const gi = pageRef.current, g = goalsRef.current[gi];
       const ctx2 = cv.getContext("2d");
+      // 器スクロールに連動した横スロッシュ：ドラッグ速度を疑似慣性として粒へ（控えめ）
+      const dr = dragRef.current, dragging = !!(dr && dr.decided === "h");
+      const carX = dragging ? (dr.x || 0) : 0;
+      const vCar = carX - prevCarRef.current; prevCarRef.current = carX;
+      const ax = dragging ? Math.max(-1.3, Math.min(1.3, -vCar * 0.055)) : 0;
       if (gi < 0 || !g) {
         const A = ambRef.current;
         if (!A.balls) {
@@ -553,10 +558,11 @@ export default function App() {
           for (let i = 0; i < AMB_N; i++) A.balls.push({ x: CX + (Math.random() - 0.5) * 2 * (CR - AMB_R) * 0.8, y: CY - CR * 0.6 + Math.random() * CR * 0.7, vx: 0, vy: 0, c: PAL[i % PAL.length], born: 0 });
           A.sim = 1400; A.calm = 0;
         }
+        if (dragging) { A.sim = Math.max(A.sim, 8); A.calm = 0; }
         if (A.sim > 0) {
           const ab = A.balls, DAMP = 0.86, RW = 0.1;
           const wall = (b) => { const dx = b.x - CX, dy = b.y - CY, d = Math.hypot(dx, dy) || 0.01; if (d + AMB_R > CR) { const nx = dx / d, ny = dy / d; b.x = CX + nx * (CR - AMB_R); b.y = CY + ny * (CR - AMB_R); const vn = b.vx * nx + b.vy * ny; if (vn > 0) { b.vx -= (1 + RW) * vn * nx; b.vy -= (1 + RW) * vn * ny; } } };
-          for (const b of ab) { b.vy += GRAV; b.vx *= DAMP; b.vy *= DAMP; b.x += b.vx; b.y += b.vy; wall(b); }
+          for (const b of ab) { b.vy += GRAV; b.vx += ax; b.vx *= DAMP; b.vy *= DAMP; b.x += b.vx; b.y += b.vy; wall(b); }
           let maxOv = 0;
           for (let it = 0; it < 8; it++) {
             maxOv = 0;
@@ -568,7 +574,7 @@ export default function App() {
           }
           let maxV2 = 0; for (const b of ab) { const v2 = b.vx * b.vx + b.vy * b.vy; if (v2 > maxV2) maxV2 = v2; }
           A.sim--;
-          if (maxV2 < 0.03 && maxOv < 0.4) { if (++A.calm > 24) A.sim = 0; } else A.calm = 0; // 重なりが消えるまで静止しない
+          if (maxV2 < 0.03 && maxOv < 0.4 && !dragging) { if (++A.calm > 24) A.sim = 0; } else A.calm = 0; // 重なりが消える＆ドラッグ終了まで静止しない
         }
         drawOrb(ctx, A.balls, AMB_R, AMB_CAP, performance.now(), orbRef.current, undefined, goldRef.current, true);
         raf = requestAnimationFrame(step); return;
@@ -576,12 +582,7 @@ export default function App() {
       const cap = capOf(g);
       const R = grainR(cap || 30), bs = ballsBy.current[g.id] || [];
       const sim = simState.current[g.id] || (simState.current[g.id] = { active: 360, calm: 0 });
-      // 器スクロールに連動した横スロッシュ：ドラッグ速度を疑似慣性として粒へ
-      const dr = dragRef.current, dragging = !!(dr && dr.decided === "h");
-      const carX = dragging ? (dr.x || 0) : 0;
-      const vCar = carX - prevCarRef.current; prevCarRef.current = carX;
-      let ax = 0;
-      if (dragging) { ax = Math.max(-2.5, Math.min(2.5, -vCar * 0.13)); sim.active = Math.max(sim.active, 8); sim.calm = 0; }
+      if (dragging) { sim.active = Math.max(sim.active, 8); sim.calm = 0; }
       if (sim.active > 0) {
       for (const b of bs) {
         b.vy += GRAV; b.vx += ax; b.x += b.vx; b.y += b.vy; b.vx *= FRIC;
