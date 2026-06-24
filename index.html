@@ -166,20 +166,20 @@ function drawOrb(ctx, bs, R, cap, now, o, img, gc) {
     const glow = ctx.createRadialGradient(lx, ly, 2, lx, ly, CR * 0.95);
     glow.addColorStop(0, `rgba(${tint.join(",")},${0.045 + breathe * 0.05})`); glow.addColorStop(1, `rgba(${tint.join(",")},0)`);
     ctx.fillStyle = glow; ctx.fillRect(CX - CR, CY - CR, CR * 2, CR * 2);
-    // 底に積もった粒（プレビュー）。実データではないので少し透かす
+    // 底に積もった粒（プレビュー）。実データではないので少し透かす。粒は小さめ＝漂う粒くらい
     ctx.globalAlpha = 0.5;
-    const D2R = Math.PI / 180;
+    const D2R = Math.PI / 180, pr = 5.5;
     const pile = [
-      [CR - R - 0.5, -46], [CR - R - 0.5, -23], [CR - R - 0.5, 0], [CR - R - 0.5, 23], [CR - R - 0.5, 46],
-      [CR - 2.6 * R, -23], [CR - 2.6 * R, 0], [CR - 2.6 * R, 23],
+      [CR - pr - 0.5, -14], [CR - pr - 0.5, -7], [CR - pr - 0.5, 0], [CR - pr - 0.5, 7], [CR - pr - 0.5, 14],
+      [CR - pr * 2.6, -7], [CR - pr * 2.6, 0], [CR - pr * 2.6, 7],
     ];
     pile.forEach(([rr, deg], i) => {
       const a = Math.PI / 2 + deg * D2R, px = CX + rr * Math.cos(a), py = CY + rr * Math.sin(a);
       const [r, g2, bl] = PAL[i % PAL.length];
-      const gr = ctx.createRadialGradient(px - R * 0.25, py - R * 0.3, 0.4, px, py, R);
+      const gr = ctx.createRadialGradient(px - pr * 0.25, py - pr * 0.3, 0.4, px, py, pr);
       gr.addColorStop(0, `rgb(${Math.min(r + 30, 255)},${Math.min(g2 + 30, 255)},${Math.min(bl + 30, 255)})`);
       gr.addColorStop(1, `rgb(${r * 0.84 | 0},${g2 * 0.84 | 0},${bl * 0.84 | 0})`);
-      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(px, py, R, 0, 7); ctx.fill();
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(px, py, pr, 0, 7); ctx.fill();
     });
     ctx.globalAlpha = 1;
     // 漂う粒（5粒）。中ほどをゆっくり巡る
