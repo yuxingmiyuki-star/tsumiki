@@ -1708,6 +1708,10 @@ export default function App() {
                     const hRate = hPts.length ? Math.round(hPts[hPts.length - 1].r) : 0;
                     const hStartDay = h.startDay || 0;
                     const hMidDay = Math.round((hStartDay + day) / 2);
+                    // この習慣の曜日別粒数
+                    const hDow = [0, 0, 0, 0, 0, 0, 0];
+                    if (L.hist) Object.entries(L.hist).forEach(([dd, c]) => { const dw = new Date((+dd - 4) * 86400000).getUTCDay(); hDow[dw] += c; });
+                    const hDowMax = Math.max(1, ...hDow);
                     return (
                       <>
                         {/* 習慣ヘッダー */}
@@ -1743,6 +1747,27 @@ export default function App() {
                               <span style={{ color: T.lo2 }}>{dateLabel(hMidDay)}</span>
                               <span>{dayOffset === 0 ? "今日" : dateLabel(day)}</span>
                             </div>
+                          </div>
+                        </div>
+                        {/* 曜日別の粒数 */}
+                        <div>
+                          <label style={s.lab}>曜日別の粒数</label>
+                          <div style={s.chartWrap}>
+                            <svg viewBox="0 0 300 72" style={{ width: "100%", display: "block" }}>
+                              {DOW_LABELS.map((lbl, i) => {
+                                const bw = 26, gap = (300 - 7 * bw) / 8, x = gap + i * (bw + gap);
+                                const barH = hDow[i] / hDowMax * 48;
+                                const isToday = new Date().getDay() === i;
+                                const hcol = `rgb(${h.c.join(",")})`;
+                                const barFill = hDow[i] > 0 ? `rgba(${h.c.join(",")},${isToday ? 1 : 0.55})` : T.hair2;
+                                return (
+                                  <g key={i}>
+                                    <rect x={x} y={56 - barH} width={bw} height={Math.max(barH, 2)} rx="4" fill={barFill} />
+                                    <text x={x + bw / 2} y={70} textAnchor="middle" fontSize="10" fill={isToday ? hcol : T.lo} fontFamily="ui-monospace, monospace">{lbl}</text>
+                                  </g>
+                                );
+                              })}
+                            </svg>
                           </div>
                         </div>
                       </>
