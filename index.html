@@ -128,10 +128,12 @@ const EM_LABELS = { 1: "傾く", 2: "弾む", 3: "縦ゆれ", 4: "ぐらり" };
 const MAX_HABITS = 6; // 1ゴールあたりの習慣の上限
 const MAX_GOALS = 4; // 同時に持てる「なりたい自分」の器の数
 const CX = 160, CY = 158, CR = 116, GRAV = 0.5, REST = 0.26, FRIC = 0.99;
+// 追加前の空きスロット専用：小さなプレビュー粒を物理で積もらせる
+const AMB_R = 7, AMB_N = 8, AMB_CAP = 64;
 
 const grainR = (cap) => Math.max(5, Math.min(22, CR * Math.sqrt(0.62 / cap)));
 // 1つのオーブを描く（RAFの本描画と、隣ゴールのスナップショット生成で共用）
-function drawOrb(ctx, bs, R, cap, now, o, img, gc) {
+function drawOrb(ctx, bs, R, cap, now, o, img, gc, ambient) {
   o = o || ORB_GLASS;
   gc = gc || [201, 162, 74]; // gold color RGB
   const full = cap > 0 && bs.length >= cap, goldNow = full;
@@ -157,8 +159,8 @@ function drawOrb(ctx, bs, R, cap, now, o, img, gc) {
   const bgl = ctx.createRadialGradient(CX, CY + CR * 0.5, 4, CX, CY + CR * 0.5, CR);
   bgl.addColorStop(0, `rgba(${tint.join(",")},${fill * 0.18})`); bgl.addColorStop(1, `rgba(${tint.join(",")},0)`);
   ctx.fillStyle = bgl; ctx.beginPath(); ctx.arc(CX, CY, CR, 0, 7); ctx.fill();
-  // 空の器：かすかな息づき。粒が無いときだけ、ゆっくり巡る光＋漂う粒＋底に積もった粒で「ここに溜まる」を見せる
-  if (bs.length === 0) {
+  // 器を追加する前の空きスロット専用：かすかな息づき（ゆっくり巡る光＋漂う粒）。積もり粒は実ボールとして bs で渡る
+  if (ambient) {
     ctx.save(); ctx.beginPath(); ctx.arc(CX, CY, CR - 0.5, 0, 7); ctx.clip();
     const ts = now / 1000;
     const ang = ts * 0.16, lx = CX + Math.cos(ang) * CR * 0.4, ly = CY - 8 + Math.sin(ang) * CR * 0.28;
@@ -166,22 +168,6 @@ function drawOrb(ctx, bs, R, cap, now, o, img, gc) {
     const glow = ctx.createRadialGradient(lx, ly, 2, lx, ly, CR * 0.95);
     glow.addColorStop(0, `rgba(${tint.join(",")},${0.045 + breathe * 0.05})`); glow.addColorStop(1, `rgba(${tint.join(",")},0)`);
     ctx.fillStyle = glow; ctx.fillRect(CX - CR, CY - CR, CR * 2, CR * 2);
-    // 底に積もった粒（プレビュー）。実データではないので少し透かす。粒は小さめ＝漂う粒くらい
-    ctx.globalAlpha = 0.5;
-    const D2R = Math.PI / 180, pr = 5.5;
-    const pile = [
-      [CR - pr - 0.5, -14], [CR - pr - 0.5, -7], [CR - pr - 0.5, 0], [CR - pr - 0.5, 7], [CR - pr - 0.5, 14],
-      [CR - pr * 2.6, -7], [CR - pr * 2.6, 0], [CR - pr * 2.6, 7],
-    ];
-    pile.forEach(([rr, deg], i) => {
-      const a = Math.PI / 2 + deg * D2R, px = CX + rr * Math.cos(a), py = CY + rr * Math.sin(a);
-      const [r, g2, bl] = PAL[i % PAL.length];
-      const gr = ctx.createRadialGradient(px - pr * 0.25, py - pr * 0.3, 0.4, px, py, pr);
-      gr.addColorStop(0, `rgb(${Math.min(r + 30, 255)},${Math.min(g2 + 30, 255)},${Math.min(bl + 30, 255)})`);
-      gr.addColorStop(1, `rgb(${r * 0.84 | 0},${g2 * 0.84 | 0},${bl * 0.84 | 0})`);
-      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(px, py, pr, 0, 7); ctx.fill();
-    });
-    ctx.globalAlpha = 1;
     // 漂う粒（5粒）。中ほどをゆっくり巡る
     for (let i = 0; i < 5; i++) {
       const ph = i * 1.3;
@@ -466,6 +452,7 @@ export default function App() {
   const audio = useRef(null), sweep = useRef(null), timer = useRef(null);
   const allClearRef = useRef(false), lastClear = useRef(false);
   const simState = useRef({}); // goalId -> { active: framesLeft, calm: calmFrames }
+  const ambRef = useRef({ balls: null, sim: 0, calm: 0 }); // 追加前スロットのプレビュー粒（物理で積もる）
   const dotHoldRef = useRef(null); // dotsバー長押しタイマー
   const hHoldRef = useRef(null); // 習慣長押しタイマー
   const gmItemRefs = useRef([]); // 器管理オーバーレイのスロットref
@@ -541,7 +528,7 @@ export default function App() {
       const dpr = window.devicePixelRatio || 1;
       const oc = document.createElement("canvas"); oc.width = 320 * dpr; oc.height = 300 * dpr;
       const octx = oc.getContext("2d"); octx.scale(dpr, dpr);
-      drawOrb(octx, [], grainR(30), 0, performance.now(), orbPal, undefined, goldRef.current);
+      drawOrb(octx, ambRef.current.balls || [], AMB_R, AMB_CAP, performance.now(), orbPal, undefined, goldRef.current, true);
       return oc.toDataURL();
     } catch (e) { return null; }
   };
@@ -556,7 +543,31 @@ export default function App() {
     const step = () => {
       const gi = pageRef.current, g = goalsRef.current[gi];
       const ctx2 = cv.getContext("2d");
-      if (gi < 0 || !g) { drawOrb(ctx, [], grainR(30), 0, performance.now(), orbRef.current, undefined, goldRef.current); raf = requestAnimationFrame(step); return; }
+      if (gi < 0 || !g) {
+        const A = ambRef.current;
+        if (!A.balls) {
+          A.balls = [];
+          for (let i = 0; i < AMB_N; i++) A.balls.push({ x: CX + (Math.random() - 0.5) * 60, y: CY - 56 + (Math.random() - 0.5) * 34, vx: (Math.random() - 0.5) * 0.6, vy: Math.random() * 0.4, c: PAL[i % PAL.length], born: 0 });
+          A.sim = 900; A.calm = 0;
+        }
+        if (A.sim > 0) {
+          const ab = A.balls;
+          for (const b of ab) {
+            b.vy += GRAV; b.x += b.vx; b.y += b.vy; b.vx *= FRIC;
+            const dx = b.x - CX, dy = b.y - CY, d = Math.hypot(dx, dy) || 0.01;
+            if (d + AMB_R > CR) { const nx = dx / d, ny = dy / d; b.x = CX + nx * (CR - AMB_R); b.y = CY + ny * (CR - AMB_R); const vn = b.vx * nx + b.vy * ny; b.vx -= (1 + REST) * vn * nx; b.vy -= (1 + REST) * vn * ny; }
+          }
+          for (let it = 0; it < 3; it++) for (let i = 0; i < ab.length; i++) for (let j = i + 1; j < ab.length; j++) {
+            const a = ab[i], b = ab[j]; let dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 0.01, ov = 2 * AMB_R - d;
+            if (ov > 0) { const nx = dx / d, ny = dy / d, p = ov / 2; a.x -= nx * p; a.y -= ny * p; b.x += nx * p; b.y += ny * p; const vn = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny; if (vn < 0) { const imp = -(1 + REST) * vn / 2; a.vx -= imp * nx; a.vy -= imp * ny; b.vx += imp * nx; b.vy += imp * ny; } }
+          }
+          let maxV2 = 0; for (const b of ab) { const v2 = b.vx * b.vx + b.vy * b.vy; if (v2 > maxV2) maxV2 = v2; }
+          A.sim--;
+          if (maxV2 < 0.02) { if (++A.calm > 30) A.sim = 0; } else A.calm = 0;
+        }
+        drawOrb(ctx, A.balls, AMB_R, AMB_CAP, performance.now(), orbRef.current, undefined, goldRef.current, true);
+        raf = requestAnimationFrame(step); return;
+      }
       const cap = capOf(g);
       const R = grainR(cap || 30), bs = ballsBy.current[g.id] || [];
       const sim = simState.current[g.id] || (simState.current[g.id] = { active: 360, calm: 0 });
