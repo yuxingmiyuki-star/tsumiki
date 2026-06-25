@@ -197,6 +197,39 @@ function drawOrb(ctx, bs, R, cap, now, o, img, gc, ambient) {
   ctx.strokeStyle = goldNow ? `rgba(${gc.join(",")},0.5)` : o.rim; ctx.lineWidth = goldNow ? 1.6 : 1; ctx.beginPath(); ctx.arc(CX, CY, CR, 0, 7); ctx.stroke();
   if (goldNow) { const pulse = 0.5 + 0.5 * Math.sin(now / 380); const og = ctx.createRadialGradient(CX, CY, CR * 0.85, CX, CY, CR * 1.7); og.addColorStop(0, `rgba(${gc.join(",")},${0.10 + pulse * 0.13})`); og.addColorStop(1, `rgba(${gc.join(",")},0)`); ctx.fillStyle = og; ctx.beginPath(); ctx.arc(CX, CY, CR * 1.7, 0, 7); ctx.fill(); }
 }
+// 粒同士の衝突を近傍グリッドで解く（総当たりだと粒数の2乗で重くなるため、近接セルだけ比較）
+function solveCollisions(bs, R, iters, rest) {
+  const n = bs.length; if (n < 2) return;
+  const cell = 2 * R;
+  for (let it = 0; it < iters; it++) {
+    const grid = {};
+    for (let i = 0; i < n; i++) {
+      const b = bs[i];
+      const k = ((b.x / cell) | 0) + "_" + ((b.y / cell) | 0);
+      (grid[k] || (grid[k] = [])).push(i);
+    }
+    for (let i = 0; i < n; i++) {
+      const a = bs[i];
+      const cx = (a.x / cell) | 0, cy = (a.y / cell) | 0;
+      for (let ox = -1; ox <= 1; ox++) for (let oy = -1; oy <= 1; oy++) {
+        const arr = grid[(cx + ox) + "_" + (cy + oy)]; if (!arr) continue;
+        for (let t = 0; t < arr.length; t++) {
+          const j = arr[t]; if (j <= i) continue;
+          const b = bs[j];
+          let dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 0.01, ov = 2 * R - d;
+          if (ov > 0) {
+            const nx = dx / d, ny = dy / d, p = ov / 2;
+            a.x -= nx * p; a.y -= ny * p; b.x += nx * p; b.y += ny * p;
+            if (rest != null) {
+              const vn = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+              if (vn < 0) { const imp = -(1 + rest) * vn / 2; a.vx -= imp * nx; a.vy -= imp * ny; b.vx += imp * nx; b.vy += imp * ny; }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 const sectorPath = (cx, cy, r, frac) => {
   const a0 = -Math.PI / 2, a1 = a0 + frac * 2 * Math.PI;
   const x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0);
@@ -510,7 +543,7 @@ export default function App() {
       const a = (Math.random() - 0.5) * 2.4, rr = (CR - R) * (0.5 + Math.random() * 0.45);
       return { x: CX + Math.sin(a) * rr * 0.6, y: CY + Math.cos(a) * rr * 0.7, vx: 0, vy: 0, c: byId[hid] || [150, 150, 150], hid, born: 0 };
     });
-    simState.current[goal.id] = { active: 0, calm: 0 };
+    wake(goal.id);
   };
   // ゴールのオーブを画像化（隣のゴールをドラッグ中に並べて見せる用）
   const snapshotGoal = (goal) => {
@@ -580,10 +613,7 @@ export default function App() {
         const dx = b.x - CX, dy = b.y - CY, d = Math.hypot(dx, dy) || 0.01;
         if (d + R > CR) { const nx = dx / d, ny = dy / d; b.x = CX + nx * (CR - R); b.y = CY + ny * (CR - R); const vn = b.vx * nx + b.vy * ny; b.vx -= (1 + REST) * vn * nx; b.vy -= (1 + REST) * vn * ny; }
       }
-      for (let it = 0; it < 3; it++) for (let i = 0; i < bs.length; i++) for (let j = i + 1; j < bs.length; j++) {
-        const a = bs[i], b = bs[j]; let dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 0.01, ov = 2 * R - d;
-        if (ov > 0) { const nx = dx / d, ny = dy / d, p = ov / 2; a.x -= nx * p; a.y -= ny * p; b.x += nx * p; b.y += ny * p; const vn = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny; if (vn < 0) { const imp = -(1 + REST) * vn / 2; a.vx -= imp * nx; a.vy -= imp * ny; b.vx += imp * nx; b.vy += imp * ny; } }
-      }
+      solveCollisions(bs, R, 3, REST);
       let maxV2 = 0; for (const b of bs) { const v2 = b.vx * b.vx + b.vy * b.vy; if (v2 > maxV2) maxV2 = v2; }
       sim.active--;
       if (maxV2 < 0.03) { if (++sim.calm > 18) sim.active = 0; } else sim.calm = 0; // 静かになったら早めに眠る
