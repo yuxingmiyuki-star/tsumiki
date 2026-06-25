@@ -129,7 +129,7 @@ const MAX_HABITS = 6; // 1ゴールあたりの習慣の上限
 const MAX_GOALS = 4; // 同時に持てる「なりたい自分」の器の数
 const CX = 160, CY = 158, CR = 116, GRAV = 0.5, REST = 0.26, FRIC = 0.99;
 // 追加前の空きスロット専用：小さなプレビュー粒を物理で積もらせる
-const AMB_R = 7, AMB_N = 20, AMB_CAP = 180;
+const AMB_R = 7, AMB_N = 6, AMB_CAP = 180;
 
 const grainR = (cap) => Math.max(5, Math.min(22, CR * Math.sqrt(0.62 / cap)));
 // 1つのオーブを描く（RAFの本描画と、隣ゴールのスナップショット生成で共用）
@@ -548,7 +548,7 @@ export default function App() {
   // ゴールのオーブを画像化（隣のゴールをドラッグ中に並べて見せる用）
   const snapshotGoal = (goal) => {
     try {
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2); // スワイプ追従用なので高解像度は不要。生成コストを抑える
       const oc = document.createElement("canvas"); oc.width = 320 * dpr; oc.height = 300 * dpr;
       const octx = oc.getContext("2d"); octx.scale(dpr, dpr);
       const bs = ballsBy.current[goal.id] || [], cap = capOf(goal);
@@ -559,7 +559,7 @@ export default function App() {
   // 空の器（まだゴールが無いスロット）を画像化
   const snapshotEmpty = () => {
     try {
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const oc = document.createElement("canvas"); oc.width = 320 * dpr; oc.height = 300 * dpr;
       const octx = oc.getContext("2d"); octx.scale(dpr, dpr);
       drawOrb(octx, ambRef.current.balls || [], AMB_R, AMB_CAP, performance.now(), orbPal, undefined, goldRef.current, true);
@@ -914,13 +914,13 @@ export default function App() {
     }));
   };
   // オーブを左右にドラッグ＝指に追従して隣のスロットが見える。離した方向にスナップ
-  const onStageDown = (e) => { dragRef.current = { active: true, decided: null, startX: e.clientX, startY: e.clientY, x: 0 }; };
+  const onStageDown = (e) => { dragRef.current = { active: true, decided: null, startX: e.clientX, startY: e.clientY, x: 0, t: performance.now() }; };
   const onStageMove = (e) => {
     const dr = dragRef.current; if (!dr || !dr.active) return;
     const dx = e.clientX - dr.startX, dy = e.clientY - dr.startY;
     if (dr.decided == null) {
-      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-      if (Math.abs(dy) >= Math.abs(dx) || MAX_GOALS < 2) { dr.decided = "v"; return; }
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+      if (MAX_GOALS < 2 || Math.abs(dy) > Math.abs(dx) * 1.4) { dr.decided = "v"; return; }
       const prevPos = (slotPos - 1 + MAX_GOALS) % MAX_GOALS;
       const nextPos = (slotPos + 1) % MAX_GOALS;
       const w = stageRef.current?.getBoundingClientRect().width || 320;
@@ -942,14 +942,16 @@ export default function App() {
   const onStageUp = () => {
     const dr = dragRef.current; dragRef.current = null;
     if (!dr) return;
+    const dt = performance.now() - (dr.t || 0);
+    const flick = (x) => dt < 280 && Math.abs(x) > 22; // 素早い弾きは少しの移動でも切り替え
     if (dr.decided === "hf") {
       const w = dr.w || 320, x = dr.x || 0;
-      if (x < -w * 0.22) setPage(dr.nextPos); else if (x > w * 0.22) setPage(dr.prevPos);
+      if (x < -w * 0.22 || (flick(x) && x < 0)) setPage(dr.nextPos); else if (x > w * 0.22 || (flick(x) && x > 0)) setPage(dr.prevPos);
       return;
     }
     if (dr.decided !== "h") return;
     const w = dr.w, x = dr.x || 0, tr = trackRef.current;
-    const commit = x < -w * 0.22 ? 1 : x > w * 0.22 ? -1 : 0; // 22%超で確定
+    const commit = (x < -w * 0.22 || (flick(x) && x < 0)) ? 1 : (x > w * 0.22 || (flick(x) && x > 0)) ? -1 : 0; // 22%超 or フリックで確定
     const finish = () => { if (commit === 1) setPage(dr.nextPos); else if (commit === -1) setPage(dr.prevPos); requestAnimationFrame(() => requestAnimationFrame(() => setDrag(null))); };
     if (tr) {
       tr.style.transition = "transform .28s cubic-bezier(.22,1,.3,1)";
