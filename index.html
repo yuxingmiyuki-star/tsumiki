@@ -2130,7 +2130,7 @@ const mkRaw = (T) => ({
   editIconOn: { background: T.gold, borderColor: T.gold },
   editBadge: { position: "absolute", top: -4, left: -4, width: 22, height: 22, borderRadius: 999, background: T.gold, border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, zIndex: 3, boxShadow: "0 1px 5px rgba(0,0,0,0.45)", animation: "badgePop .62s cubic-bezier(.2,.8,.3,1) both" },
   idLabel: { fontFamily: "ui-monospace, monospace", fontSize: 10, letterSpacing: 3, color: T.lo2 },
-  idName: { fontSize: 24, fontWeight: 600, letterSpacing: 1, marginTop: 6 },
+  idName: { fontSize: 24, fontWeight: 600, letterSpacing: 1, marginTop: 6, lineHeight: 1.25, height: "2.5em", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" },
   stageWrap: { background: T.panel, borderRadius: 16, border: `1px solid ${T.hair}`, overflow: "hidden", flexShrink: 0 },
   orbPhotoCtrl: { position: "absolute", top: 10, right: 12, display: "flex", gap: 6, zIndex: 4 },
   orbPhotoBtn: { width: 30, height: 30, borderRadius: 999, border: `1px solid ${T.hair2}`, background: T.surface, color: T.lo, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, fontSize: 17, lineHeight: 1, boxShadow: "0 1px 4px rgba(0,0,0,0.22)" },
