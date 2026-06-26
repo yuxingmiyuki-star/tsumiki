@@ -1192,7 +1192,7 @@ export default function App() {
           )}
           {showPlay && (
             <button onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); startTimer(i); }} aria-label={running ? "タイマーを止める" : "タイマー開始"} style={s.playBtn}>
-              {running ? <span style={{ fontSize: 9, color: T.onGold }}>■</span> : <span style={{ fontSize: 11, color: T.onGold, marginLeft: 1 }}>▶</span>}
+              {running ? <span style={{ fontSize: 12, color: T.onGold }}>■</span> : <span style={{ fontSize: 15, color: T.onGold, marginLeft: 2 }}>▶</span>}
             </button>
           )}
           {!editMode && !isFlipped && streak > 0 && <span style={s.streakBadge}><Flame size={10} color="#0B0C10" strokeWidth={2.6} fill="#0B0C10" />{streak}</span>}
@@ -1476,7 +1476,7 @@ export default function App() {
             </>)}
             {introStep === 3 && (<>
               <div style={{ margin: "2px 0" }}><MiniOrb colors={INTRO_GRAINS} size={132} done /></div>
-              <div style={s.introTitle}>満ちたら、なれた自分。</div>
+              <div style={s.introTitle}>満ちた時には、理想の自分になっている。</div>
               <div style={s.introBody}>器が粒でいっぱいになったら達成。「なれた自分」として、コレクションに並びます。</div>
             </>)}
             <button style={{ ...s.create, alignSelf: "stretch" }} onClick={() => introStep < 3 ? setIntroStep(introStep + 1) : dismissIntro()}>{introStep < 3 ? "次へ" : "はじめる"}</button>
@@ -2255,7 +2255,7 @@ const mkRaw = (T) => ({
   noHabits: { display: "flex", flexDirection: "column", alignItems: "center", gap: 14, padding: "20px 24px 8px", textAlign: "center" },
   noHabitsTxt: { fontSize: 13.5, color: T.lo, lineHeight: 1.8 },
   streakBadge: { position: "absolute", top: -3, right: -4, background: T.gold, color: T.onGold, borderRadius: 999, minWidth: 18, height: 18, padding: "0 5px", display: "flex", alignItems: "center", justifyContent: "center", gap: 1, fontSize: 11, fontWeight: 800, fontFamily: "ui-monospace, monospace", boxShadow: `0 0 10px ${T.gold}80` },
-  playBtn: { position: "absolute", bottom: -2, right: -2, width: 26, height: 26, borderRadius: 999, background: T.gold, border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, zIndex: 4, boxShadow: "0 1px 6px rgba(0,0,0,0.5)", lineHeight: 1 },
+  playBtn: { position: "absolute", bottom: -2, right: -2, width: 34, height: 34, borderRadius: 999, background: T.gold, border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, zIndex: 4, boxShadow: "0 1px 6px rgba(0,0,0,0.5)", lineHeight: 1 },
   linkBadge: { position: "absolute", top: -3, left: -4, width: 18, height: 18, borderRadius: 999, background: T.surface, border: `1px solid ${T.hair2}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", textDecoration: "none", zIndex: 2 },
   clearLine: { textAlign: "center", color: T.gold, fontSize: 12.5, fontWeight: 600, letterSpacing: 1, marginTop: -6, marginBottom: 2, animation: "achfade .5s ease" },
   gdProg: { marginTop: 4 },
