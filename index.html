@@ -1215,17 +1215,17 @@ export default function App() {
   return (
     <div className="tsumiki-app" style={{ ...s.page, "--ac": goldRgb(T).join(",") }} onContextMenu={(e) => e.preventDefault()}>
       <style>{KEY}</style>
-      <div style={{ ...s.screen, gap: 10, padding: "16px 20px 18px", touchAction: "none" }} onPointerDown={onStageDown} onPointerMove={onStageMove} onPointerUp={onStageUp} onPointerCancel={onStageCancel}>
+      <div style={{ ...s.screen, gap: 6, padding: "10px 20px 18px", touchAction: "none" }} onPointerDown={onStageDown} onPointerMove={onStageMove} onPointerUp={onStageUp} onPointerCancel={onStageCancel}>
         <div style={s.bar}>
           <span style={s.wordmark}>GrainME</span>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <button style={s.colBtn} onClick={() => setShowCol(true)}>✦ {collection.length}</button>
-            {hasGoal && <button style={s.iconBtn} aria-label="分析" onClick={() => { setGoalDetail(curGi); setDetailPage(0); }}><BarChart3 size={17} color={T.lo} strokeWidth={2} /></button>}
+            {hasGoal && <button style={s.analyzeBtn} aria-label="分析" onClick={() => { setGoalDetail(curGi); setDetailPage(0); }}><BarChart3 size={16} color={T.lo} strokeWidth={2.2} /></button>}
             <button style={s.iconBtn} aria-label="設定" onClick={() => { setIoMsg(""); setShowSettings(true); }}><Settings size={17} color={T.lo} strokeWidth={2} /></button>
           </div>
         </div>
 
-        <div style={{ ...s.idBlock, paddingTop: 2 }}>
+        <div style={s.idBlock}>
           {hasGoal ? (<>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={s.idLabel}>なりたい自分</div>
