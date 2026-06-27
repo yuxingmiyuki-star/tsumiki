@@ -1218,7 +1218,7 @@ export default function App() {
     <div className="tsumiki-app" style={{ ...s.page, "--ac": goldRgb(T).join(",") }} onContextMenu={(e) => e.preventDefault()}>
       <style>{KEY}</style>
       <div style={{ ...s.screen, gap: 6, padding: "6px 20px 18px", touchAction: "none" }} onPointerDown={onStageDown} onPointerMove={onStageMove} onPointerUp={onStageUp} onPointerCancel={onStageCancel}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 0, flexShrink: 0, minHeight: 74 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 0, flexShrink: 0, height: 90, overflow: "hidden" }}>
           <div style={s.bar}>
             <span style={s.wordmark}>GrainME</span>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
