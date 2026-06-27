@@ -393,8 +393,8 @@ export default function App() {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
-  // オーブの表示サイズ：画面高さの37%を上限、最大300px、最小180px
-  const orbH = Math.max(180, Math.min(300, Math.round(vh * 0.37)));
+  // オーブの表示サイズ：画面高さの34%を上限、最大300px、最小170px
+  const orbH = Math.max(170, Math.min(300, Math.round(vh * 0.34)));
   // 縦横比を保ちつつ幅を計算（元サイズ 320×300）
   const orbW = Math.round(orbH * (320 / 300));
 
@@ -1055,11 +1055,31 @@ export default function App() {
   // 画面が小さい（SE相当: ~667px）ときは1段階多く詰める
   const smallScreen = vh <= 680;
   const compact = hcEff >= 5 ? 2 : hcEff >= 3 ? 1 : (smallScreen && hcEff >= 2 ? 1 : 0); // 0=1〜2個 1=3〜4個 2=5〜6個
-  // 習慣数（追加セル含む）でアイコンの大きさを段階的に変える：少ないほど大きく
-  const cellSize = hcEff <= 1 ? { D: 160, icon: 54, emoji: 54, w: 174, gap: 6 }
+  // セル数から行数を決める（1〜2個=1行 / 3〜4個=2行 / 5〜6個=2行）
+  const rowCount = hcEff <= 2 ? 1 : 2;
+  // 習慣数（追加セル含む）でアイコンの大きさを段階的に変える：少ないほど大きく（これは上限の希望値）
+  const cellBase = hcEff <= 1 ? { D: 160, icon: 54, emoji: 54, w: 174, gap: 6 }
     : hcEff === 2 ? { D: 142, icon: 48, emoji: 48, w: 156, gap: 6 }
     : hcEff <= 4 ? { D: 120, icon: 41, emoji: 40, w: 132, gap: 4 }
     : { D: 88, icon: 30, emoji: 30, w: 98, gap: 3 };
+  // 習慣エリアに使える高さを画面から逆算し、円が収まる直径の上限を求める
+  // 画面全体 − ヘッダー − 目標名 − オーブ − dots − screenの上下padding/gap など固定ぶん
+  const RESERVED = 34 /*header*/ + 60 /*目標名*/ + 40 /*dots*/ + 78 /*padding+gap+ツール余白*/ + 24 /*safe下*/;
+  const availH = Math.max(150, vh - orbH - RESERVED);
+  // 行あたりに使える高さ。1セル= 円 + ラベル(~22) + 行gap。行数で割る
+  const rowGap = compact === 2 ? 3 : compact === 1 ? 6 : 12;
+  const perRowH = (availH - rowGap * (rowCount - 1)) / rowCount;
+  const maxD = Math.max(56, Math.floor(perRowH - 26)); // ラベル+セルgapぶんを引いた円の最大直径
+  // 希望値と上限の小さい方を採用。アイコン等は直径比でスケール
+  const D = Math.min(cellBase.D, maxD);
+  const scale = D / cellBase.D;
+  const cellSize = {
+    D,
+    icon: Math.round(cellBase.icon * scale),
+    emoji: Math.round(cellBase.emoji * scale),
+    w: Math.round(cellBase.w * scale),
+    gap: cellBase.gap,
+  };
   // 行の分け方：1〜2個は1行、3〜4個は2行(2+1 / 2+2)、5〜6個は2行(3+2 / 3+3)
   const habitRows = (() => {
     const items = hasGoal ? g.habits.map((h, i) => ({ h, i })) : [];
