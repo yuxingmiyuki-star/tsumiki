@@ -1063,8 +1063,8 @@ export default function App() {
     : hcEff <= 4 ? { D: 120, icon: 41, emoji: 40, w: 132, gap: 4 }
     : { D: 88, icon: 30, emoji: 30, w: 98, gap: 3 };
   // 習慣エリアに使える高さを画面から逆算し、円が収まる直径の上限を求める
-  // 画面全体 − ヘッダー − 目標名 − オーブ − dots − screenの上下padding/gap など固定ぶん
-  const RESERVED = 34 /*header*/ + 60 /*目標名*/ + 40 /*dots*/ + 78 /*padding+gap+ツール余白*/ + 24 /*safe下*/;
+  // 画面全体 − ヘッダー − 目標名 − オーブ − screenの上下padding/gap など固定ぶん（dotsはオーブ内に重ねたので加算不要）
+  const RESERVED = 34 /*header*/ + 60 /*目標名*/ + 70 /*padding+gap+ツール余白*/ + 24 /*safe下*/;
   const availH = Math.max(150, vh - orbH - RESERVED);
   // 行あたりに使える高さ。1セル= 円 + ラベル(~22) + 行gap。行数で割る
   const rowGap = compact === 2 ? 3 : compact === 1 ? 6 : 12;
@@ -1211,6 +1211,11 @@ export default function App() {
             onPointerUp={() => { if (hDragFromRef.current === null) { clearTimeout(hHoldRef.current); openEdit(i); } }}
             onPointerLeave={() => { if (hDragFromRef.current === null) clearTimeout(hHoldRef.current); }}>
             {frontInner}
+            {/* 編集モードの目印：点線リング＋中央に鉛筆。タップで編集できることを示す */}
+            <span style={{ position: "absolute", inset: 0, borderRadius: "50%", border: `2px dashed ${T.gold}`, opacity: 0.55, boxSizing: "border-box", pointerEvents: "none" }} />
+            <span style={{ position: "absolute", right: "14%", bottom: "14%", width: Math.max(20, D * 0.26), height: Math.max(20, D * 0.26), borderRadius: 999, background: T.gold, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 1px 5px rgba(0,0,0,0.45)", pointerEvents: "none" }}>
+              <Pencil size={Math.max(11, D * 0.14)} color="#0B0C10" strokeWidth={2.6} />
+            </span>
           </button>
           ) : (
           <div style={{ position: "relative", width: D, height: D, perspective: 600 }}>
@@ -1237,7 +1242,6 @@ export default function App() {
               <ExternalLink size={11} color={T.lo} strokeWidth={2.4} />
             </a>
           )}
-          {editMode && <button style={s.editBadge} onClick={(e) => { e.stopPropagation(); openEdit(i); }} aria-label={`${h.name} を編集`}><Pencil size={11} color="#0B0C10" strokeWidth={2.6} /></button>}
         </div>
         <span style={s.cellLabel}>{h.name}</span>
         {perDay > 1 && dueT && !full && <span style={{ ...s.cellStatus, color: tdc >= perDay ? T.gold : T.lo }}>{tdc}/{perDay}</span>}
@@ -1311,23 +1315,22 @@ export default function App() {
               ))}
             </div>
           )}
+          {/* page nav：器スロット。オーブ底に重ねて、習慣エリアと干渉させない */}
+          <div style={{ ...s.dots, ...s.dotsOnOrb, touchAction: "none" }}
+            onPointerDown={() => { dotHoldRef.current = setTimeout(openGoalMgr, 800); }}
+            onPointerUp={() => clearTimeout(dotHoldRef.current)}
+            onPointerCancel={() => clearTimeout(dotHoldRef.current)}
+            onPointerLeave={() => clearTimeout(dotHoldRef.current)}
+          >
+            <button style={s.arrow} onClick={() => goRel(-1)}>‹</button>
+            {slots.map((slot, i) => slot.type === "add"
+              ? <button key={"a" + i} onClick={() => setPage(i)} style={{ ...s.dotPlus, ...(i === slotPos ? { borderColor: T.gold, color: T.gold } : {}) }}>＋</button>
+              : <button key={slot.gi} onClick={() => setPage(i)} style={{ ...s.dot, ...(i === slotPos ? s.dotOn : {}) }} />
+            )}
+            <button style={s.arrow} onClick={() => goRel(1)}>›</button>
+          </div>
         </div>
         
-
-        {/* page nav：4つの器スロット */}
-        <div style={{ ...s.dots, touchAction: "none" }}
-          onPointerDown={() => { dotHoldRef.current = setTimeout(openGoalMgr, 800); }}
-          onPointerUp={() => clearTimeout(dotHoldRef.current)}
-          onPointerCancel={() => clearTimeout(dotHoldRef.current)}
-          onPointerLeave={() => clearTimeout(dotHoldRef.current)}
-        >
-          <button style={s.arrow} onClick={() => goRel(-1)}>‹</button>
-          {slots.map((slot, i) => slot.type === "add"
-            ? <button key={"a" + i} onClick={() => setPage(i)} style={{ ...s.dotPlus, ...(i === slotPos ? { borderColor: T.gold, color: T.gold } : {}) }}>＋</button>
-            : <button key={slot.gi} onClick={() => setPage(i)} style={{ ...s.dot, ...(i === slotPos ? s.dotOn : {}) }} />
-          )}
-          <button style={s.arrow} onClick={() => goRel(1)}>›</button>
-        </div>
         {onAdd && <div style={s.addHint}>{addKind === "first" ? <>ひと粒ずつ積もって、<br />なりたい自分になっていく。</> : <>器は最大4つ。<br />並べて、同時に育てられる。</>}</div>}
         {onAdd && <div style={{ flex: 1 }} />}
 
@@ -1369,6 +1372,7 @@ export default function App() {
             <button style={{ ...s.editIcon, ...(editMode ? s.editIconOn : {}) }} onClick={() => setEditMode((m) => !m)} aria-label={editMode ? "完了" : "習慣を編集"}>
               {editMode ? <Check size={15} color="#0B0C10" strokeWidth={3} /> : <Pencil size={14} color={T.lo} strokeWidth={2.2} />}
             </button>
+            {editMode && <span style={s.editHint}>タップで編集・長押しで並べ替え</span>}
           </div>
         </div>
         )}
@@ -2164,7 +2168,7 @@ const mkRaw = (T) => ({
   animChipOn: { borderColor: T.gold, color: T.gold, background: `${T.gold}1a` },
   editIcon: { width: 30, height: 30, borderRadius: 999, border: `1px solid ${T.hair2}`, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0 },
   editIconOn: { background: T.gold, borderColor: T.gold },
-  editBadge: { position: "absolute", top: 2, left: 2, width: 22, height: 22, borderRadius: 999, background: T.gold, border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, zIndex: 3, boxShadow: "0 1px 5px rgba(0,0,0,0.45)", animation: "badgePop .62s cubic-bezier(.2,.8,.3,1) both" },
+  editHint: { marginLeft: 10, fontSize: 11.5, color: T.gold, fontWeight: 600, letterSpacing: 0.3, whiteSpace: "nowrap", animation: "achfade .3s ease" },
   idLabel: { fontFamily: "ui-monospace, monospace", fontSize: 10, letterSpacing: 3, color: T.lo2 },
   idName: { fontSize: 24, fontWeight: 600, letterSpacing: 1, marginTop: 6, lineHeight: 1.25, height: "2.5em", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" },
   stageWrap: { background: T.panel, borderRadius: 16, border: `1px solid ${T.hair}`, overflow: "hidden", flexShrink: 0 },
@@ -2175,6 +2179,7 @@ const mkRaw = (T) => ({
   frameU: { fontSize: 12, color: T.lo },
   framePct: { fontSize: 12, fontWeight: 600, color: T.lo, marginLeft: 8, fontFamily: "ui-monospace, Menlo, monospace", letterSpacing: 0.3 },
   dots: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8 },
+  dotsOnOrb: { position: "absolute", left: "50%", bottom: 10, transform: "translateX(-50%)", zIndex: 5, padding: "5px 10px", borderRadius: 999, background: "rgba(0,0,0,0.28)", backdropFilter: "blur(3px)" },
   arrow: { background: "transparent", border: "none", color: T.lo, fontSize: 20, cursor: "pointer", padding: "10px 8px", lineHeight: 1 },
   dot: { width: 8, height: 8, borderRadius: 999, border: "none", background: T.lo2, cursor: "pointer", padding: 0 },
   dotOn: { background: T.gold, width: 18, borderRadius: 4 },
