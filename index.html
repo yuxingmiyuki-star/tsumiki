@@ -1259,7 +1259,7 @@ export default function App() {
           <div style={{ animation: trans ? `${trans.dir > 0 ? "orbInNext" : "orbInPrev"} .3s cubic-bezier(.22,1,.3,1)` : "none", opacity: drag ? 0 : 1 }}>
             <canvas ref={canvasRef} style={{ width: orbW, height: orbH, maxWidth: "100%", display: "block", margin: "0 auto" }} />
           </div>
-          {trans && <img src={trans.url} alt="" onAnimationEnd={() => setTrans(null)} style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: orbW, height: orbH, maxWidth: "100%", pointerEvents: "none", animation: `${trans.dir > 0 ? "orbOutNext" : "orbOutPrev"} .3s cubic-bezier(.22,1,.3,1) forwards` }} />}}
+          {trans && <img src={trans.url} alt="" onAnimationEnd={() => setTrans(null)} style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: orbW, height: orbH, maxWidth: "100%", pointerEvents: "none", animation: `${trans.dir > 0 ? "orbOutNext" : "orbOutPrev"} .3s cubic-bezier(.22,1,.3,1) forwards` }} />}
           {hasGoal && cap > 0 && (
             <div style={s.frameTL}>
               {full ? <span style={{ ...s.frameN, color: T.gold, opacity: 1 }}>達成</span> : (<>
@@ -1328,7 +1328,7 @@ export default function App() {
           </div>
         ) : (
         <div style={{ ...s.habits, gap: compact === 2 ? 2 : compact === 1 ? 3 : 4 }}>
-          <div style={{ ...s.grid, gap: compact === 2 ? 3 : compact === 1 ? 6 : 12, minHeight: 220, justifyContent: "center", position: "relative" }}>
+          <div style={{ ...s.grid, gap: compact === 2 ? 3 : compact === 1 ? 6 : 12, justifyContent: "center", position: "relative" }}>
           {habitRows.map((row, ri) => {
             const spread = row.length === 2 && habitRows.length === 1; // 2個1行のときだけ左右に広げる
             return (
@@ -2139,12 +2139,12 @@ const mkRaw = (T) => ({
   analyzeBtn: { width: 34, height: 34, borderRadius: 999, border: `1px solid ${T.hair2}`, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, padding: 0 },
   habits: { display: "flex", flexDirection: "column", gap: 4, position: "relative", flex: 1, minHeight: 0, justifyContent: "center" },
   habitTools: { display: "flex", justifyContent: "flex-start", alignItems: "center" },
-  habitToolsFloat: { position: "absolute", left: 0, bottom: 0, display: "flex", alignItems: "center", zIndex: 4 },
+  habitToolsFloat: { display: "flex", alignItems: "center", justifyContent: "flex-start", paddingLeft: 2, marginTop: 2 },
   animChip: { background: "transparent", border: `1px solid ${T.hair2}`, color: T.lo, borderRadius: 999, padding: "4px 9px", fontSize: 11, cursor: "pointer", fontFamily: "inherit" },
   animChipOn: { borderColor: T.gold, color: T.gold, background: `${T.gold}1a` },
   editIcon: { width: 30, height: 30, borderRadius: 999, border: `1px solid ${T.hair2}`, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0 },
   editIconOn: { background: T.gold, borderColor: T.gold },
-  editBadge: { position: "absolute", top: -4, left: -4, width: 22, height: 22, borderRadius: 999, background: T.gold, border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, zIndex: 3, boxShadow: "0 1px 5px rgba(0,0,0,0.45)", animation: "badgePop .62s cubic-bezier(.2,.8,.3,1) both" },
+  editBadge: { position: "absolute", top: 2, left: 2, width: 22, height: 22, borderRadius: 999, background: T.gold, border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, zIndex: 3, boxShadow: "0 1px 5px rgba(0,0,0,0.45)", animation: "badgePop .62s cubic-bezier(.2,.8,.3,1) both" },
   idLabel: { fontFamily: "ui-monospace, monospace", fontSize: 10, letterSpacing: 3, color: T.lo2 },
   idName: { fontSize: 24, fontWeight: 600, letterSpacing: 1, marginTop: 6, lineHeight: 1.25, height: "2.5em", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" },
   stageWrap: { background: T.panel, borderRadius: 16, border: `1px solid ${T.hair}`, overflow: "hidden", flexShrink: 0 },
