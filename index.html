@@ -1063,8 +1063,8 @@ export default function App() {
     : hcEff <= 4 ? { D: 120, icon: 41, emoji: 40, w: 132, gap: 4 }
     : { D: 88, icon: 30, emoji: 30, w: 98, gap: 3 };
   // 習慣エリアに使える高さを画面から逆算し、円が収まる直径の上限を求める
-  // 画面全体 − ヘッダー − 目標名 − オーブ − screenの上下padding/gap など固定ぶん（dotsはオーブ内に重ねたので加算不要）
-  const RESERVED = 34 /*header*/ + 60 /*目標名*/ + 70 /*padding+gap+ツール余白*/ + 24 /*safe下*/;
+  // 画面全体 − ヘッダー − 目標名 − オーブ − dots(薄) − screenの上下padding/gap など固定ぶん
+  const RESERVED = 34 /*header*/ + 60 /*目標名*/ + 34 /*dots薄*/ + 70 /*padding+gap+ツール余白*/ + 24 /*safe下*/;
   const availH = Math.max(150, vh - orbH - RESERVED);
   // 行あたりに使える高さ。1セル= 円 + ラベル(~22) + 行gap。行数で割る
   const rowGap = compact === 2 ? 3 : compact === 1 ? 6 : 12;
@@ -1315,22 +1315,22 @@ export default function App() {
               ))}
             </div>
           )}
-          {/* page nav：器スロット。オーブ底に重ねて、習慣エリアと干渉させない */}
-          <div style={{ ...s.dots, ...s.dotsOnOrb, touchAction: "none" }}
-            onPointerDown={() => { dotHoldRef.current = setTimeout(openGoalMgr, 800); }}
-            onPointerUp={() => clearTimeout(dotHoldRef.current)}
-            onPointerCancel={() => clearTimeout(dotHoldRef.current)}
-            onPointerLeave={() => clearTimeout(dotHoldRef.current)}
-          >
-            <button style={s.arrow} onClick={() => goRel(-1)}>‹</button>
-            {slots.map((slot, i) => slot.type === "add"
-              ? <button key={"a" + i} onClick={() => setPage(i)} style={{ ...s.dotPlus, ...(i === slotPos ? { borderColor: T.gold, color: T.gold } : {}) }}>＋</button>
-              : <button key={slot.gi} onClick={() => setPage(i)} style={{ ...s.dot, ...(i === slotPos ? s.dotOn : {}) }} />
-            )}
-            <button style={s.arrow} onClick={() => goRel(1)}>›</button>
-          </div>
         </div>
-        
+
+        {/* page nav：器スロット。オーブと習慣エリアの間に薄く置く */}
+        <div style={{ ...s.dots, ...s.dotsThin, touchAction: "none" }}
+          onPointerDown={() => { dotHoldRef.current = setTimeout(openGoalMgr, 800); }}
+          onPointerUp={() => clearTimeout(dotHoldRef.current)}
+          onPointerCancel={() => clearTimeout(dotHoldRef.current)}
+          onPointerLeave={() => clearTimeout(dotHoldRef.current)}
+        >
+          <button style={s.arrowThin} onClick={() => goRel(-1)}>‹</button>
+          {slots.map((slot, i) => slot.type === "add"
+            ? <button key={"a" + i} onClick={() => setPage(i)} style={{ ...s.dotPlusThin, ...(i === slotPos ? { borderColor: T.gold, color: T.gold } : {}) }}>＋</button>
+            : <button key={slot.gi} onClick={() => setPage(i)} style={{ ...s.dot, ...(i === slotPos ? s.dotOn : {}) }} />
+          )}
+          <button style={s.arrowThin} onClick={() => goRel(1)}>›</button>
+        </div>
         {onAdd && <div style={s.addHint}>{addKind === "first" ? <>ひと粒ずつ積もって、<br />なりたい自分になっていく。</> : <>器は最大4つ。<br />並べて、同時に育てられる。</>}</div>}
         {onAdd && <div style={{ flex: 1 }} />}
 
@@ -1351,7 +1351,7 @@ export default function App() {
           </div>
         ) : (
         <div style={{ ...s.habits, gap: compact === 2 ? 2 : compact === 1 ? 3 : 4 }}>
-          <div style={{ ...s.grid, gap: compact === 2 ? 3 : compact === 1 ? 6 : 12, justifyContent: "center", position: "relative" }}>
+          <div style={{ ...s.grid, gap: compact === 2 ? 3 : compact === 1 ? 6 : 12, justifyContent: "center", position: "relative", flex: 1 }}>
           {habitRows.map((row, ri) => {
             const spread = row.length === 2 && habitRows.length === 1; // 2個1行のときだけ左右に広げる
             return (
@@ -1368,7 +1368,7 @@ export default function App() {
             );
           })}
           </div>
-          <div style={s.habitToolsFloat}>
+          <div style={s.habitToolsFixed}>
             <button style={{ ...s.editIcon, ...(editMode ? s.editIconOn : {}) }} onClick={() => setEditMode((m) => !m)} aria-label={editMode ? "完了" : "習慣を編集"}>
               {editMode ? <Check size={15} color="#0B0C10" strokeWidth={3} /> : <Pencil size={14} color={T.lo} strokeWidth={2.2} />}
             </button>
@@ -2164,6 +2164,7 @@ const mkRaw = (T) => ({
   habits: { display: "flex", flexDirection: "column", gap: 4, position: "relative", flex: 1, minHeight: 0, justifyContent: "center" },
   habitTools: { display: "flex", justifyContent: "flex-start", alignItems: "center" },
   habitToolsFloat: { display: "flex", alignItems: "center", justifyContent: "flex-start", paddingLeft: 2, marginTop: 2 },
+  habitToolsFixed: { position: "absolute", left: 0, bottom: 0, display: "flex", alignItems: "center", zIndex: 4 },
   animChip: { background: "transparent", border: `1px solid ${T.hair2}`, color: T.lo, borderRadius: 999, padding: "4px 9px", fontSize: 11, cursor: "pointer", fontFamily: "inherit" },
   animChipOn: { borderColor: T.gold, color: T.gold, background: `${T.gold}1a` },
   editIcon: { width: 30, height: 30, borderRadius: 999, border: `1px solid ${T.hair2}`, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0 },
@@ -2179,11 +2180,13 @@ const mkRaw = (T) => ({
   frameU: { fontSize: 12, color: T.lo },
   framePct: { fontSize: 12, fontWeight: 600, color: T.lo, marginLeft: 8, fontFamily: "ui-monospace, Menlo, monospace", letterSpacing: 0.3 },
   dots: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8 },
-  dotsOnOrb: { position: "absolute", left: "50%", bottom: 10, transform: "translateX(-50%)", zIndex: 5, padding: "5px 10px", borderRadius: 999, background: "rgba(0,0,0,0.28)", backdropFilter: "blur(3px)" },
+  dotsThin: { marginTop: 2, marginBottom: 2, opacity: 0.9 },
   arrow: { background: "transparent", border: "none", color: T.lo, fontSize: 20, cursor: "pointer", padding: "10px 8px", lineHeight: 1 },
+  arrowThin: { background: "transparent", border: "none", color: T.lo2, fontSize: 16, cursor: "pointer", padding: "6px 6px", lineHeight: 1 },
   dot: { width: 8, height: 8, borderRadius: 999, border: "none", background: T.lo2, cursor: "pointer", padding: 0 },
   dotOn: { background: T.gold, width: 18, borderRadius: 4 },
   dotPlus: { width: 30, height: 30, borderRadius: 999, border: `1px solid ${T.hair2}`, background: "transparent", color: T.lo, fontSize: 12, cursor: "pointer", lineHeight: 1, padding: 0, marginLeft: 2, display: "flex", alignItems: "center", justifyContent: "center" },
+  dotPlusThin: { width: 22, height: 22, borderRadius: 999, border: `1px solid ${T.hair2}`, background: "transparent", color: T.lo2, fontSize: 11, cursor: "pointer", lineHeight: 1, padding: 0, marginLeft: 2, display: "flex", alignItems: "center", justifyContent: "center" },
   grid: { display: "flex", flexDirection: "column", alignItems: "center", padding: 0 },
   gridRow: { display: "flex", justifyContent: "center", alignItems: "flex-start" },
   cell: { display: "flex", flexDirection: "column", alignItems: "center", gap: 6, width: 84 },
