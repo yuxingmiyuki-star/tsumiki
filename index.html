@@ -1218,7 +1218,7 @@ export default function App() {
     <div className="tsumiki-app" style={{ ...s.page, "--ac": goldRgb(T).join(",") }} onContextMenu={(e) => e.preventDefault()}>
       <style>{KEY}</style>
       <div style={{ ...s.screen, gap: 6, padding: "6px 20px 18px", touchAction: "none" }} onPointerDown={onStageDown} onPointerMove={onStageMove} onPointerUp={onStageUp} onPointerCancel={onStageCancel}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 0, flexShrink: 0, minHeight: 78 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 0, flexShrink: 0, minHeight: 74 }}>
           <div style={s.bar}>
             <span style={s.wordmark}>GrainME</span>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -2120,7 +2120,7 @@ function MiniOrb({ colors, size = 96, done = true, goldColor = "#C9A24A" }) {
 const mkRaw = (T) => ({
   page: { height: "100%", background: T.bg, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "calc(env(safe-area-inset-top, 0px) + 8px)", paddingRight: 10, paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 10px)", paddingLeft: 10, boxSizing: "border-box", overflow: "hidden", fontFamily: 'system-ui, -apple-system, "Hiragino Kaku Gothic ProN", sans-serif', color: T.hi },
   screen: { width: "100%", maxWidth: 430, flex: 1, minHeight: 0, boxSizing: "border-box", overflow: "hidden", overscrollBehavior: "none", padding: "16px 20px 18px", display: "flex", flexDirection: "column", gap: 10 },
-  bar: { display: "flex", justifyContent: "space-between", alignItems: "center" },
+  bar: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: -4 },
   wordmark: { fontFamily: "ui-monospace, Menlo, monospace", fontSize: 12, letterSpacing: 3, color: T.lo },
   mono: { fontFamily: "ui-monospace, Menlo, monospace", fontSize: 12, letterSpacing: 1, color: T.gold },
   idBlock: { display: "flex", alignItems: "center", gap: 10, paddingTop: 0, flexShrink: 0 },
