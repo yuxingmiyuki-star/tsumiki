@@ -386,6 +386,18 @@ const syncReminder = (goal, habit) => {
 };
 
 export default function App() {
+  // 画面高さをリアクティブに取得（機種・向き変化に追従）
+  const [vh, setVh] = useState(() => window.innerHeight);
+  useEffect(() => {
+    const onResize = () => setVh(window.innerHeight);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  // オーブの表示サイズ：画面高さの37%を上限、最大300px、最小180px
+  const orbH = Math.max(180, Math.min(300, Math.round(vh * 0.37)));
+  // 縦横比を保ちつつ幅を計算（元サイズ 320×300）
+  const orbW = Math.round(orbH * (320 / 300));
+
   const [goals, setGoals] = useState(() => SAVED?.goals ? withIds(SAVED.goals) : []); // 初回は空っぽ。サンプルや先入れ粒は持たない
   const [, setTick] = useState(0); const bump = () => setTick((t) => t + 1); // 粒数の真実は ballsBy。再描画のきっかけだけ持つ
   const [page, setPage] = useState(0);
@@ -1040,7 +1052,9 @@ export default function App() {
   const hc = hasGoal ? g.habits.length : 0;
   const showAddCell = editMode && hc < MAX_HABITS; // 末尾に「追加」セルを出すか
   const hcEff = hc + (showAddCell ? 1 : 0); // レイアウト計算用の実効セル数
-  const compact = hcEff >= 5 ? 2 : hcEff >= 3 ? 1 : 0; // 0=1〜2個 1=3〜4個 2=5〜6個
+  // 画面が小さい（SE相当: ~667px）ときは1段階多く詰める
+  const smallScreen = vh <= 680;
+  const compact = hcEff >= 5 ? 2 : hcEff >= 3 ? 1 : (smallScreen && hcEff >= 2 ? 1 : 0); // 0=1〜2個 1=3〜4個 2=5〜6個
   // 習慣数（追加セル含む）でアイコンの大きさを段階的に変える：少ないほど大きく
   const cellSize = hcEff <= 1 ? { D: 160, icon: 54, emoji: 54, w: 174, gap: 6 }
     : hcEff === 2 ? { D: 142, icon: 48, emoji: 48, w: 156, gap: 6 }
@@ -1243,9 +1257,9 @@ export default function App() {
 
         <div ref={stageRef} style={{ ...s.stageWrap, position: "relative" }}>
           <div style={{ animation: trans ? `${trans.dir > 0 ? "orbInNext" : "orbInPrev"} .3s cubic-bezier(.22,1,.3,1)` : "none", opacity: drag ? 0 : 1 }}>
-            <canvas ref={canvasRef} style={{ width: 320, height: 300, maxWidth: "100%", display: "block", margin: "0 auto" }} />
+            <canvas ref={canvasRef} style={{ width: orbW, height: orbH, maxWidth: "100%", display: "block", margin: "0 auto" }} />
           </div>
-          {trans && <img src={trans.url} alt="" onAnimationEnd={() => setTrans(null)} style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: 320, height: 300, maxWidth: "100%", pointerEvents: "none", animation: `${trans.dir > 0 ? "orbOutNext" : "orbOutPrev"} .3s cubic-bezier(.22,1,.3,1) forwards` }} />}
+          {trans && <img src={trans.url} alt="" onAnimationEnd={() => setTrans(null)} style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: orbW, height: orbH, maxWidth: "100%", pointerEvents: "none", animation: `${trans.dir > 0 ? "orbOutNext" : "orbOutPrev"} .3s cubic-bezier(.22,1,.3,1) forwards` }} />}}
           {hasGoal && cap > 0 && (
             <div style={s.frameTL}>
               {full ? <span style={{ ...s.frameN, color: T.gold, opacity: 1 }}>達成</span> : (<>
@@ -1269,10 +1283,10 @@ export default function App() {
             </div>
           )}
           {drag && (
-            <div ref={trackRef} style={{ position: "absolute", top: 0, left: 0, width: drag.w * 3, height: 300, transform: `translateX(${-drag.w}px)`, willChange: "transform", pointerEvents: "none" }}>
+            <div ref={trackRef} style={{ position: "absolute", top: 0, left: 0, width: drag.w * 3, height: orbH, transform: `translateX(${-drag.w}px)`, willChange: "transform", pointerEvents: "none" }}>
               {drag.urls.map((u, k) => (
-                <div key={k} style={{ position: "absolute", top: 0, left: k * drag.w, width: drag.w, height: 300, display: "flex", justifyContent: "center" }}>
-                  <img src={u} alt="" style={{ width: 320, maxWidth: "100%", height: 300, display: "block" }} />
+                <div key={k} style={{ position: "absolute", top: 0, left: k * drag.w, width: drag.w, height: orbH, display: "flex", justifyContent: "center" }}>
+                  <img src={u} alt="" style={{ width: orbW, maxWidth: "100%", height: orbH, display: "block" }} />
                 </div>
               ))}
             </div>
