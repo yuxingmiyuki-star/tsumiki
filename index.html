@@ -499,6 +499,7 @@ export default function App() {
   const gmItemRefs = useRef([]); // 器管理オーバーレイのスロットref
   const habitCellRefs = useRef({}); // habitId -> セル要素（座標ヒット判定・FLIP用）
   const flipPressRef = useRef(null); // 習慣カードのタップ/長押し判定（タップ=裏返し）
+  const flipDelayRef = useRef(null); // クイックタップ判定：QUICK ms後にdown()を遅延起動
   const calHoldRef = useRef(null); // 裏面アイコン長押し→カレンダー
   const flipPrevRef = useRef({}); // habitId -> 直前のrect（FLIPアニメ用）
   const hDragFromRef = useRef(null); // 習慣DnD現在地（即時）
@@ -1099,10 +1100,23 @@ export default function App() {
       onPointerLeave: () => { if (timer.current) { clearTimeout(timer.current); timer.current = null; stopSimmer(); } setHeld(-1); flipPressRef.current = null; },
       onPointerCancel: () => { if (timer.current) { clearTimeout(timer.current); timer.current = null; stopSimmer(); } setHeld(-1); flipPressRef.current = null; },
     } : {
-      onPointerDown: (e) => { down(i)(e); flipPressRef.current = Date.now(); },
-      onPointerUp: () => { const quick = flipPressRef.current && (Date.now() - flipPressRef.current < QUICK); up(); if (quick) flipThis(); flipPressRef.current = null; },
-      onPointerLeave: () => { up(); flipPressRef.current = null; },
-      onPointerCancel: () => { up(); flipPressRef.current = null; },
+      onPointerDown: (e) => {
+        e.preventDefault(); flipPressRef.current = Date.now();
+        flipDelayRef.current = setTimeout(() => { flipDelayRef.current = null; down(i)(e); }, QUICK);
+      },
+      onPointerUp: () => {
+        const quick = flipPressRef.current && (Date.now() - flipPressRef.current < QUICK);
+        if (flipDelayRef.current) { clearTimeout(flipDelayRef.current); flipDelayRef.current = null; }
+        up(); if (quick) flipThis(); flipPressRef.current = null;
+      },
+      onPointerLeave: () => {
+        if (flipDelayRef.current) { clearTimeout(flipDelayRef.current); flipDelayRef.current = null; }
+        up(); flipPressRef.current = null;
+      },
+      onPointerCancel: () => {
+        if (flipDelayRef.current) { clearTimeout(flipDelayRef.current); flipDelayRef.current = null; }
+        up(); flipPressRef.current = null;
+      },
     };
     // 裏面（編集アイコン）：クイックタップで表に戻す／長押しでカレンダー
     const backHandlers = {
