@@ -785,16 +785,16 @@ export default function App() {
   const dayToDate = (dn) => new Date((dn - 4) * DAY_MS); // getUTC* で年月日/曜日を読む
   const dateToDay = (y, m, d) => Math.floor(Date.UTC(y, m, d) / DAY_MS) + 4;
   // カレンダー1マスの状態：done(○)/miss(✕)/blank(薄丸)/future(薄丸)
-  // hist値: >0=done, -1=手動blank, 0/なし=未記録
+  // hist値: >0=done, -1=手動免除(blank扱い), なし=未記録
   const calCellState = (h, L, dn) => {
     if (dn > day) return "future";
     const hist = (L && L.hist) || {};
     if (hist[dn] > 0) return "done";
-    if (hist[dn] === -1) return "blank"; // 手動でblankにした
-    if (h.startDay && dn < h.startDay) return "blank"; // 習慣作成前
+    if (hist[dn] === -1) return "blank"; // 手動免除
+    const sd = h.startDay || 0;
+    if (sd > 0 && dn < sd) return "blank"; // 習慣作成前
     const mode = h.fmode || "daily";
     if (mode === "week") {
-      // その日の属する週が終わっている（今日が翌週以降）かつ週ノルマ未達ならmiss
       const wk = Math.floor(dn / 7);
       const curWk = Math.floor(day / 7);
       if (wk >= curWk) return "blank"; // 今週はまだ判定しない
@@ -803,7 +803,8 @@ export default function App() {
       return wkDone < target ? "miss" : "blank";
     }
     if (mode === "days") { const dow = dayToDate(dn).getUTCDay(); if (!(h.days || [0, 1, 2, 3, 4, 5, 6]).includes(dow)) return "blank"; }
-    return dn < day ? "miss" : "blank"; // 過去の対象日は✕、今日は空欄丸
+    // 今日より前の対象日はすべて✕（未記録＝やってない）。今日は空欄丸
+    return dn < day ? "miss" : "blank";
   };
   // 履歴(hist)の合計に合わせて、その習慣の粒数を増減（器の見た目を記録と一致させる）
   const reconcileGrains = (goal, hb, hist) => {
@@ -834,9 +835,11 @@ export default function App() {
     const mode = hb.fmode || "daily";
     const fullCount = mode === "week" ? 1 : Math.max(1, hb.perDay || 1);
     const cur = hist[dn];
-    if (cur > 0) { hist[dn] = -1; }          // done → miss(手動blank)
-    else if (cur === -1) { delete hist[dn]; } // miss → blank(未記録に戻す)
-    else { hist[dn] = fullCount; }            // blank → done
+    const stt = calCellState(hb, L, dn); // 現在の表示状態（変更前のLで判定）
+    if (cur > 0) { delete hist[dn]; }         // ○ → 自動判定（✕ or 空欄）に戻す
+    else if (cur === -1) { hist[dn] = fullCount; } // 手動✕ → ○
+    else if (stt === "miss") { hist[dn] = fullCount; } // 自動✕ → ○
+    else { hist[dn] = -1; }                   // 空欄 → 手動✕
     const wk = Math.floor(day / 7);
     const td = Math.max(0, hist[day] || 0);
     let wc = 0; for (const d in hist) if (hist[d] > 0 && Math.floor(+d / 7) === wk) wc += hist[d];
@@ -1432,16 +1435,16 @@ export default function App() {
                   const isToday = dn === day, future = dn > day;
                   const num = dayToDate(dn).getUTCDate();
                   if (stt === "done") {
-                    // ○ → タップで✕へ
+                    // ○ → タップで自動判定(✕or空欄)へ
                     return <button key={dn} onClick={() => toggleDay(cal.gi, cal.i, dn)} style={{ ...base, background: col, color: onCol, border: isToday ? `2px solid ${T.hi}` : "2px solid transparent", cursor: "pointer" }}>{num}</button>;
                   }
                   if (stt === "miss") {
-                    // ✕ → タップで空欄丸へ
+                    // ✕(自動 or 手動) → タップで○へ
                     return <button key={dn} onClick={() => toggleDay(cal.gi, cal.i, dn)} style={{ ...base, border: "2px solid transparent", cursor: "pointer" }} aria-label={`${num}日 未実施`}>
                       <span style={{ fontSize: 16, fontWeight: 800, color: T.lo }}>✕</span>
                     </button>;
                   }
-                  // 空欄丸（blank/future/今日） → 未来以外タップで○へ
+                  // 空欄(免除/未来/今日) → 未来以外タップで手動✕へ
                   return <button key={dn} disabled={future} onClick={() => { if (!future) toggleDay(cal.gi, cal.i, dn); }} style={{ ...base, color: future ? T.lo2 : T.lo, border: isToday ? `2px solid ${col}` : `1.5px solid ${T.hair2}`, opacity: future ? 0.45 : 0.9, cursor: future ? "default" : "pointer" }}>{num}</button>;
                 })}
               </div>
