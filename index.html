@@ -785,16 +785,15 @@ export default function App() {
   const dayToDate = (dn) => new Date((dn - 4) * DAY_MS); // getUTC* で年月日/曜日を読む
   const dateToDay = (y, m, d) => Math.floor(Date.UTC(y, m, d) / DAY_MS) + 4;
   // カレンダー1マスの状態：done(○)/miss(✕)/blank(薄丸)/future(薄丸)
-  // hist値: >0=done, -1=手動免除(blank扱い), なし=未記録
+  // hist値: >0=手動○, -1=手動免除, なし=自動判定
   const calCellState = (h, L, dn) => {
     if (dn > day) return "future";
     const hist = (L && L.hist) || {};
     if (hist[dn] > 0) return "done";
     if (hist[dn] === -1) return "blank"; // 手動免除
-    const sd = h.startDay || 0;
-    if (sd > 0 && dn < sd) return "blank"; // 習慣作成前
     const mode = h.fmode || "daily";
     if (mode === "week") {
+      // 週が完全に終わった（翌週以降）かつノルマ未達 → miss
       const wk = Math.floor(dn / 7);
       const curWk = Math.floor(day / 7);
       if (wk >= curWk) return "blank"; // 今週はまだ判定しない
@@ -802,8 +801,11 @@ export default function App() {
       let wkDone = 0; for (const d in hist) { if (hist[d] > 0 && Math.floor(+d / 7) === wk) wkDone++; }
       return wkDone < target ? "miss" : "blank";
     }
-    if (mode === "days") { const dow = dayToDate(dn).getUTCDay(); if (!(h.days || [0, 1, 2, 3, 4, 5, 6]).includes(dow)) return "blank"; }
-    // 今日より前の対象日はすべて✕（未記録＝やってない）。今日は空欄丸
+    if (mode === "days") {
+      const dow = dayToDate(dn).getUTCDay();
+      if (!(h.days || [0, 1, 2, 3, 4, 5, 6]).includes(dow)) return "blank"; // 対象外曜日
+    }
+    // 今日より前＝未記録は✕、今日はまだ空欄丸
     return dn < day ? "miss" : "blank";
   };
   // 履歴(hist)の合計に合わせて、その習慣の粒数を増減（器の見た目を記録と一致させる）
