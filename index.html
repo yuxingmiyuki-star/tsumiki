@@ -254,7 +254,8 @@ const streakInfo = (h, L, day) => {
   const hist = (L && L.hist) || {};
   const mode = h.fmode || "daily", pd = Math.max(1, h.perDay || 1);
   let earliest = day; for (const k in hist) { if (hist[k] > 0) { const kn = +k; if (kn < earliest) earliest = kn; } }
-  const sd = Math.max(Math.min(h.startDay || 0, earliest), day - 366); // 過去に遡って記録した分も連続日数に反映（最大1年）
+  const startDay = h.startDay || 0;
+  const sd = Math.max(startDay > 0 ? startDay : earliest, day - 366); // startDay以前・1年超は遡らない
   if (mode === "week") {
     const target = Math.max(1, h.perWeek || 3);
     const curWk = Math.floor(day / 7), startWk = Math.floor(sd / 7);
@@ -768,6 +769,7 @@ export default function App() {
   const calCellState = (h, L, dn) => {
     if (dn > day) return "future";
     if (((L && L.hist) || {})[dn] > 0) return "done";
+    if (h.startDay && dn < h.startDay) return "blank"; // 習慣作成前は空欄（✕にしない）
     const mode = h.fmode || "daily";
     if (mode === "week") return "blank"; // 週◯回は未達でも空欄
     if (mode === "days") { const dow = dayToDate(dn).getUTCDay(); if (!(h.days || [0, 1, 2, 3, 4, 5, 6]).includes(dow)) return "blank"; }
