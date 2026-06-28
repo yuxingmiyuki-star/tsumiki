@@ -255,23 +255,23 @@ const streakInfo = (h, L, day) => {
   const mode = h.fmode || "daily", pd = Math.max(1, h.perDay || 1);
   let earliest = day; for (const k in hist) { if (hist[k] > 0) { const kn = +k; if (kn < earliest) earliest = kn; } }
   const startDay = h.startDay || 0;
-  const sd = Math.max(startDay > 0 ? startDay : earliest, day - 366); // startDay以前・1年超は遡らない
+  const sd = Math.max(earliest, day - 366); // 記録の最古日から最大1年
   if (mode === "week") {
     const target = Math.max(1, h.perWeek || 3);
     const curWk = Math.floor(day / 7), startWk = Math.floor(sd / 7);
     const daysByWk = {};
-    Object.entries(hist).forEach(([d, c]) => { if (c > 0) { const w = Math.floor(+d / 7); (daysByWk[w] || (daysByWk[w] = new Set())).add(+d); } });
-    const done = (w) => daysByWk[w] ? daysByWk[w].size : 0; // その週にやった日数
+    Object.entries(hist).forEach(([d, c]) => { if (c > 0 && +d >= startDay) { const w = Math.floor(+d / 7); (daysByWk[w] || (daysByWk[w] = new Set())).add(+d); } });
+    const done = (w) => daysByWk[w] ? daysByWk[w].size : 0;
     const curDone = done(curWk), curMet = curDone >= target;
     const remUsable = (7 - (day % 7)) - ((hist[day] || 0) > 0 ? 1 : 0);
-    const curFeasible = curDone + remUsable >= target; // 今週まだ届くか
+    const curFeasible = curDone + remUsable >= target;
     let cur = 0;
     if (curMet || curFeasible) { cur += curDone; let w = curWk - 1; while (w >= startWk && done(w) >= target) { cur += done(w); w--; } }
     let best = 0, run = 0;
     for (let w = startWk; w <= curWk; w++) {
       const dw = done(w), met = dw >= target;
       if (met || (w === curWk && curFeasible)) { run += dw; if (run > best) best = run; }
-      else { run += dw; if (run > best) best = run; run = 0; } // 失敗した週でも、やった日数はベストに算入してから途切れる
+      else { run += dw; if (run > best) best = run; run = 0; }
     }
     if (cur > best) best = cur;
     return { cur, best, unit: "日" };
